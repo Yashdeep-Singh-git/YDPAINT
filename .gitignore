@@ -1,0 +1,13 @@
+# Ignore build files
+build/
+*.o
+*.exe
+*.tar
+*.user
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
