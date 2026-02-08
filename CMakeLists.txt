@@ -20,7 +20,7 @@ set(CMAKE_AUTOUIC ON) # Handle UI files (if any)
 # 2. DEFINE SOURCES
 # -----------------------------------------------------------------------------
 # Tell CMake where your header files are
-include_directories(include/models include/gui include/utils)
+include_directories(include)
 
 # Automatically find all .cpp files in your src folder and subfolders
 file(GLOB_RECURSE SOURCES "src/*.cpp")
