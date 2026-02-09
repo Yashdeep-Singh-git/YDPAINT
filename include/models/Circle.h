@@ -8,11 +8,11 @@ class Circle : public Object {
     int _radius;
 
     public:
-    Circle(int cx, int cy , int radius , const std::string &stroke , const std::string &fill , int width)    
+    Circle(int cx, int cy , int radius , const std::string &stroke , const std::string &fill , int width);
     // ~Circle() 
-    void draw(Qpainter &qpainter) override;
+    void draw(QPainter &qpainter) override;
     std::string toSVG() override;
-    bool isHit(Qpoint q) override;
+    bool isHit(QPoint q) override;
 };
 
 #endif

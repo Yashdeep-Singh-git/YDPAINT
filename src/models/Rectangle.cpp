@@ -14,7 +14,7 @@ void Rectangle::draw(Qpainter &painter){
     painter.drawRect(QPoint(_x, _y), _width, _height);
 }
 
-string  Rectangle::toSVG(){
+std::string  Rectangle::toSVG(){
     std::stringstream out;
     out << "<rect x=\"" << _x << "\" y=\"" << _y << "\" width=\"" << _width << "\" height=\"" << _height << "\" stroke=\"" << _stroke_color 
     << "\" fill=\"" << _fill_color << "\" stroke-width=\"" << _stroke_width << "\" />";

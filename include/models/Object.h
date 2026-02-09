@@ -2,8 +2,8 @@
 #define OBJECT_HPP
 
 #include <string>
-#include <Qpainter>
-#include <Qpoint>
+#include <QPainter>
+#include <QPoint>
 
 class Object{
     protected:
