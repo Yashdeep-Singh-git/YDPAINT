@@ -3,6 +3,12 @@
 
 // ... (keep constructor) ...
 
+Canvas::Canvas(QWidget *parent) : QWidget(parent) {
+    // Optional: Set a specific background color if you want
+    // setPalette(QPalette(Qt::white));
+    // setAutoFillBackground(true);
+}
+
 void Canvas::addShape(std::unique_ptr<Object> shape) {
     // 1. Take ownership of the shape and save it
     shapes.push_back(std::move(shape));

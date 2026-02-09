@@ -11,7 +11,7 @@ class Rectangle : public Object {
     Rectangle(int x , int y , int width , int height , const std::string &stroke_color , const std::string &fill_color , int stroke_width); 
     void draw(QPainter &qpainter) override;
     std::string toSVG() override;
-    bool isHit(QPoint q) override;
+    bool isHit(const QPoint& q) override;
 };
 
 #endif

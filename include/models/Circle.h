@@ -12,7 +12,7 @@ class Circle : public Object {
     // ~Circle() 
     void draw(QPainter &qpainter) override;
     std::string toSVG() override;
-    bool isHit(QPoint q) override;
+    bool isHit(const QPoint& p) override;
 };
 
 #endif

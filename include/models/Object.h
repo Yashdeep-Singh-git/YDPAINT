@@ -16,7 +16,7 @@ class Object{
     virtual ~Object() = default;
     virtual void draw(QPainter &qpainter) = 0;
     virtual std::string toSVG() = 0;
-    virtual bool isHit(QPoint qpoint) = 0;
+    virtual bool isHit(const QPoint& qpoint) = 0;
 
     void setpos(int x , int y);
     void setStroke_color(const std::string &stroke_color);

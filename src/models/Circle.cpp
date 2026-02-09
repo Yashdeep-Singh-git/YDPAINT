@@ -1,4 +1,4 @@
-#include "include\models\Circle.h"
+#include "include/models/Circle.h"
 #include <string>
 #include <sstream>
 
@@ -20,7 +20,7 @@ std::string Circle::toSVG() {
     return out.str();
 }
 
-bool Circle::isHit(const Qpoint& p){
+bool Circle::isHit(const QPoint& p){
     long long dx = p.x()- _x; long long dy = p.y()- _y;
     return (dx*dx+dy*dy <= 1LL*_radius*_radius);
 }

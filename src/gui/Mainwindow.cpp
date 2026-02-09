@@ -1,6 +1,7 @@
 #include "include/gui/Mainwindow.h"
 #include "include/models/Circle.h" // Needed to create the test circle
 #include "include/models/Rectangle.h"   // Needed to create the test rectangle
+#include "include/gui/Canvas.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // 1. Setup the Window UI

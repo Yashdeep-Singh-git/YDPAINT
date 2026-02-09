@@ -28,7 +28,11 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 # -----------------------------------------------------------------------------
 # 3. BUILD THE EXECUTABLE
 # -----------------------------------------------------------------------------
-add_executable(VectorEditor ${SOURCES})
+# explicit list of headers is safer, but glob works for now if we include it
+
+file(GLOB_RECURSE HEADERS "include/gui/*.h" "include/models/*.h")
+
+add_executable(VectorEditor ${SOURCES} ${HEADERS})
 
 # Link the libraries (Qt) to your executable
 target_link_libraries(VectorEditor PRIVATE Qt6::Widgets Qt6::Gui Qt6::Core)
