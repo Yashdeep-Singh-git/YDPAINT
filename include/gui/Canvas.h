@@ -31,6 +31,10 @@ public:
     // Getter for the parser to access shapes
     std::vector<std::unique_ptr<Object>>& getShapes();
 
+    void setStrokeWidth(int w);
+    void setStrokeColor(const std::string& color);
+    void setFillColor(const std::string& color);
+
 protected:
     // The "paint" function called automatically by Qt
     void paintEvent(QPaintEvent *event) override;
@@ -49,6 +53,10 @@ private:
     bool isDrawing;
     QPoint startPoint;    // Where you first clicked
     QPoint currentPoint;  // Where the mouse is right now
+
+    int currentStrokeWidth;
+    std::string currentStrokeColor;
+    std::string currentFillColor;
     
     // A temporary pointer to hold the shape currently being drawn
     std::unique_ptr<Object> previewShape;
