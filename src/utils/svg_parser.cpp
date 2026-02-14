@@ -30,7 +30,7 @@ std::vector<std::unique_ptr<Object>> SVGParser::parseFile(const std::string& fil
     std::string line;
     while (std::getline(file, line)) {
         // 1. Check for Circle
-        if (line.find("<circle") != std::string::npos) {
+        if (line.find("circle") != std::string::npos) {
             int cx = std::stoi(getAttribute(line, "cx"));
             int cy = std::stoi(getAttribute(line, "cy"));
             int r  = std::stoi(getAttribute(line, "r"));
@@ -42,7 +42,7 @@ std::vector<std::unique_ptr<Object>> SVGParser::parseFile(const std::string& fil
         }
         
         // 2. Check for Rectangle
-        else if (line.find("<rect") != std::string::npos) {
+        else if (line.find("rect") != std::string::npos) {
             int x = std::stoi(getAttribute(line, "x"));
             int y = std::stoi(getAttribute(line, "y"));
             int w = std::stoi(getAttribute(line, "width"));

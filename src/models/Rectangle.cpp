@@ -7,11 +7,23 @@ Rectangle::Rectangle(int x , int y , int width , int height , const std::string 
     Object(x , y , stroke_color , fill_color , stroke_width) , _width(width) , _height(height) {}
 
 void Rectangle::draw(QPainter &painter){
-    QColor sColor(_stroke_color.c_str()); 
-    QColor fColor(_fill_color.c_str());
-    QPen pen(sColor, _stroke_width);
-    painter.setPen(pen);
-    painter.setBrush(fColor);
+    if (_stroke_color == "none"){
+        painter.setPen(Qt::NoPen);
+    }
+    else {    
+        QColor sColor(_stroke_color.c_str()); 
+        QPen pen(sColor, _stroke_width);
+        painter.setPen(pen);
+    }
+    
+    if (_fill_color == "none"){
+        painter.setBrush(Qt::NoBrush);
+    }
+    else {
+        QColor fColor(_fill_color.c_str());
+        painter.setBrush(fColor);
+    }
+    
     painter.drawRect(_x, _y , _width, _height);
 }
 

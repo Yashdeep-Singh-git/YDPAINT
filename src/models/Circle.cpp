@@ -5,11 +5,24 @@
 Circle::Circle(int cx , int cy , int radius , const std::string &stroke , const std::string &fill , int width) : Object(cx,cy,stroke,fill,width), _radius(radius) {}
 
 void Circle::draw(QPainter &painter){
-    QColor sColor(_stroke_color.c_str()); 
-    QColor fColor(_fill_color.c_str());
-    QPen pen(sColor, _stroke_width);
-    painter.setPen(pen);
-    painter.setBrush(fColor);
+    
+    if (_stroke_color == "none"){
+        painter.setPen(Qt::NoPen);
+    }
+    else{
+        QColor sColor(_stroke_color.c_str()); 
+        QPen pen(sColor, _stroke_width);
+        painter.setPen(pen);
+    }
+    
+    if (_fill_color == "none"){
+        painter.setBrush(Qt::NoBrush);
+    }
+    else{
+        QColor fColor(_fill_color.c_str());
+        painter.setBrush(fColor);
+    }
+
     painter.drawEllipse(QPoint(_x, _y), _radius, _radius);
 }
 
