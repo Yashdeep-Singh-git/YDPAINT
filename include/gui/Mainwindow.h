@@ -11,8 +11,12 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow(); 
 
+protected:
+    void closeEvent(QCloseEvent *event);
+
 private:
     Canvas* canvas; // The drawing area
+    std::string currentFile;
 };
 
 #endif // MAINWINDOW_H

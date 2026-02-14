@@ -1,5 +1,12 @@
 <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="100" cy="100" r="50" stroke="red" stroke-width="3" fill="blue" />
-  <rect x="200" y="50" width="150" height="100" stroke="black" stroke-width="2" fill="yellow" />
-  <circle cx="100" cy="150" r="30" stroke="green" stroke-width="5" fill="none" />
+  <circle cx="100" cy="100" r="50" stroke="red" fill="blue" stroke-width="3" />
+  <rect x="200" y="50" width="150" height="100" stroke="black" fill="yellow" stroke-width="2" />
+  <circle cx="100" cy="150" r="30" stroke="green" fill="none" stroke-width="5" />
+  <circle cx="202" cy="301" r="74" stroke="black" fill="none" stroke-width="2" />
+  <rect x="411" y="200" width="159" height="108" stroke="black" fill="none" stroke-width="2" />
+  <rect x="293" y="59" width="92" height="62" stroke="black" fill="none" stroke-width="2" />
+  <circle cx="251" cy="186" r="49" stroke="black" fill="none" stroke-width="2" />
+  <circle cx="428" cy="199" r="56" stroke="black" fill="none" stroke-width="2" />
+  <rect x="379" y="101" width="66" height="110" stroke="black" fill="none" stroke-width="2" />
+  <rect x="147" y="154" width="55" height="70" stroke="black" fill="none" stroke-width="2" />
 </svg>

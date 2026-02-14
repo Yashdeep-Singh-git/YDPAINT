@@ -4,30 +4,47 @@
 #include "include/gui/Canvas.h"
 #include "include/utils/svg_parser.h"
 #include <QDebug>
+#include <QToolBar>
+#include <QAction>
+#include <QCloseEvent>
+
+
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     resize(800, 600);
     canvas = new Canvas(this);
     setCentralWidget(canvas);
+    currentFile = "./../sample.svg";
 
-    // --- NEW LOADING LOGIC ---
+    // --- TOOLBAR SETUP ---
+    QToolBar *toolbar = addToolBar("Tools");
+
+    QAction *actCircle = toolbar->addAction("Circle");
+    connect(actCircle, &QAction::triggered, [this]() {
+        canvas->setTool(ToolType::Circle);
+    });
+
+    QAction *actRect = toolbar->addAction("Rectangle");
+    connect(actRect, &QAction::triggered, [this]() {
+        canvas->setTool(ToolType::Rectangle);
+    });
     
-    // 1. Create a dummy SVG file to test (Manual test)
-    // You should create a file named "test.svg" in your build folder with this content:
-    // <circle cx="100" cy="100" r="40" fill="green" stroke="black" stroke-width="2" />
-    // <rect x="200" y="200" width="100" height="50" fill="yellow" stroke="red" stroke-width="4" />
-
-    // 2. Parse the file
-    // Note: ensure "test.svg" is in the folder where you run the executable!
-    auto shapes = SVGParser::parseFile("./../sample.svg");
-
-    // 3. Add loaded shapes to canvas
-    for (auto& s : shapes) {
+    // --- LOAD FILE ---
+    // Try to load existing file, or start fresh
+    auto loadedShapes = SVGParser::parseFile(currentFile);
+    for(auto& s : loadedShapes) {
         canvas->addShape(std::move(s));
     }
-    SVGParser::saveFile("./../output.svg", canvas->getShapes());
+}
+
+// --- AUTO-SAVE ON CLOSE ---
+// Add "void closeEvent(QCloseEvent *event) override;" to MainWindow.h
+void MainWindow::closeEvent(QCloseEvent *event) {
+    // Save everything before the window closes
+    SVGParser::saveFile(currentFile, canvas->getShapes());
+    
+    event->accept(); // Allow the window to close
 }
 
 MainWindow::~MainWindow() {
-    // Canvas is automatically deleted by QMainWindow because it's a child widget.
 }
