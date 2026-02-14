@@ -2,31 +2,29 @@
 #include "include/models/Circle.h" // Needed to create the test circle
 #include "include/models/Rectangle.h"   // Needed to create the test rectangle
 #include "include/gui/Canvas.h"
+#include "include/utils/svg_parser.h"
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-    // 1. Setup the Window UI
-    resize(800, 600); 
-    setWindowTitle("Vector Editor - Test Phase"); 
-
-    // 2. Create the Canvas and place it in the center
+    resize(800, 600);
     canvas = new Canvas(this);
     setCentralWidget(canvas);
 
-    // --- TEMPORARY TEST CODE (Verify your Backend works!) ---
+    // --- NEW LOADING LOGIC ---
     
-    // Test 1: A Blue Circle
-    // Params: cx, cy, radius, stroke, fill, stroke_width
-    auto c = std::make_unique<Circle>(200, 200, 50, "black", "blue", 3);
-    
-    // Test 2: A Red Rectangle
-    // Params: x, y, width, height, stroke, fill, stroke_width
-    auto r = std::make_unique<Rectangle>(400, 100, 100, 60, "black", "red", 3);
+    // 1. Create a dummy SVG file to test (Manual test)
+    // You should create a file named "test.svg" in your build folder with this content:
+    // <circle cx="100" cy="100" r="40" fill="green" stroke="black" stroke-width="2" />
+    // <rect x="200" y="200" width="100" height="50" fill="yellow" stroke="red" stroke-width="4" />
 
-    // 3. Hand them over to the Canvas (Transfer ownership)
-    canvas->addShape(std::move(c));
-    canvas->addShape(std::move(r));
+    // 2. Parse the file
+    // Note: ensure "test.svg" is in the folder where you run the executable!
+    auto shapes = SVGParser::parseFile("./../sample.svg");
 
-    // -------------------------------------------------------
+    // 3. Add loaded shapes to canvas
+    for (auto& s : shapes) {
+        canvas->addShape(std::move(s));
+    }
 }
 
 MainWindow::~MainWindow() {

@@ -1,53 +1,59 @@
-// #include "include/utils/svg_parser.h"
-// #include "include/utils/parse_circle.h"
+#include "include/utils/svg_parser.h"
+#include "include/models/Circle.h"
+#include "include/models/Rectangle.h"
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
-// std::vector<std::string> Parser::_breakdown(string &s){
-//     std::vector<std::string> out;
-//     std::string temp = ""; std::bool on = 0;
-//     for (auto x:s){
-//         if (x=='<') {
-//             on = 1;
-//             temp = "";
-//             continue;
-//         }
-//         if (x=='>'){
-//             on = 0;
-//             out.pb(temp); temp = "";
-//             continue;
-//         }
-//         if (on) {
-//             temp.pb(x);
-//         }
-//     }
-//     return out;
-// }
+// Helper to extract values like cx="50"
+std::string SVGParser::getAttribute(const std::string& tag, const std::string& key) {
+    std::string searchKey = key + "=\"";
+    size_t startPos = tag.find(searchKey);
+    
+    if (startPos == std::string::npos) return "0"; // Default if not found
 
-// std::string Parser::_type(const std::string &s){
-//     std::string out = ""; std::bool on = 0;
-//     for (auto x:s){
-//         if (on){
-//             if (x == " ") {
-//                 on = 0;
-//                 break;
-//             }
-//             out.pb(x)
-//         }
-//         else{
-//             if (x != " "){
-//                 on = 1;
-//                 out.pb(x);
-//             }
-//         }
-//     }
-//     return out;
-// }
+    startPos += searchKey.length();
+    size_t endPos = tag.find("\"", startPos);
+    
+    return tag.substr(startPos, endPos - startPos);
+}
 
-// static std::vector<std::unique_ptr<GraphicsObject>> parseFile(const std::string& filename){
-//     std::string complete = filename.open();
-//     std::vector<std::string> cmds = _breakdown(complete);
-//     std::vector<std::unique_ptr<GraphicsObject>> out;
-//     for (auto x:cmds){
-//         std::string tag = _type(x);
-//         if (x == "circle") out.pb(in_parse_circle(x));
-//     }
-// }
+std::vector<std::unique_ptr<Object>> SVGParser::parseFile(const std::string& filepath) {
+    std::vector<std::unique_ptr<Object>> objects;
+    std::ifstream file(filepath);
+
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << filepath << std::endl;
+        return objects;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        // 1. Check for Circle
+        if (line.find("<circle") != std::string::npos) {
+            int cx = std::stoi(getAttribute(line, "cx"));
+            int cy = std::stoi(getAttribute(line, "cy"));
+            int r  = std::stoi(getAttribute(line, "r"));
+            std::string fill = getAttribute(line, "fill");
+            std::string stroke = getAttribute(line, "stroke");
+            int sw = std::stoi(getAttribute(line, "stroke-width"));
+
+            objects.push_back(std::make_unique<Circle>(cx, cy, r, stroke, fill, sw));
+        }
+        
+        // 2. Check for Rectangle
+        else if (line.find("<rect") != std::string::npos) {
+            int x = std::stoi(getAttribute(line, "x"));
+            int y = std::stoi(getAttribute(line, "y"));
+            int w = std::stoi(getAttribute(line, "width"));
+            int h = std::stoi(getAttribute(line, "height"));
+            std::string fill = getAttribute(line, "fill");
+            std::string stroke = getAttribute(line, "stroke");
+            int sw = std::stoi(getAttribute(line, "stroke-width"));
+
+            objects.push_back(std::make_unique<Rectangle>(x, y, w, h, stroke, fill, sw));
+        }
+    }
+
+    return objects;
+}

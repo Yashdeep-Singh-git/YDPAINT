@@ -1,25 +1,19 @@
-// #ifndef svg_parser_hpp
-// #define svg_parser_hpp
+#ifndef SVG_PARSER_HPP
+#define SVG_PARSER_HPP
 
-// #include <vector>
-// #include <memory>
-// #include <string>
+#include <string>
+#include <vector>
+#include <memory>
+#include "include/models/Object.h" // Your base class
 
-// class Parser{
-//     private:
+class SVGParser {
+public:
+    // Main function: Reads a file and returns the list of objects
+    static std::vector<std::unique_ptr<Object>> parseFile(const std::string& filepath);
 
-//     std::vector<std::string> _breakdown(const std::string &s);
+private:
+    // Helper: Extracts value from a string (e.g., finds 'cx="100"' -> returns "100")
+    static std::string getAttribute(const std::string& tag, const std::string& key);
+};
 
-//     std::string _type(const std::string &s);
-
-//     public:
-
-//     // API 1: READ - Converts a file on disk into C++ objects
-//     static std::vector<std::unique_ptr<GraphicsObject>> parseFile(const std::string& filename);
-
-//     // API 2: WRITE - Converts C++ objects back into a file on disk
-//     static void saveFile(const std::string& filename, const std::vector<std::unique_ptr<GraphicsObject>>& shapes);
-// };
-
-
-// #endif
+#endif
