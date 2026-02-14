@@ -1,0 +1,14 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+        <file>resources/icons/circle.png</file>
+        <file>resources/icons/rectangle.png</file>
+        <file>resources/icons/roundedrectangle.png</file>
+        <file>resources/icons/line.png</file>
+        <file>resources/icons/hexagon.png</file>
+        <file>resources/icons/freehand.png</file>
+        <file>resources/icons/text.png</file>
+        <file>resources/icons/stroke_color.png</file>
+        <file>resources/icons/fill_color.png</file>
+    </qresource>
+</RCC>

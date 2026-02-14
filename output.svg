@@ -1,7 +1,17 @@
 <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
   <circle cx="100" cy="100" r="50" stroke="red" fill="blue" stroke-width="3" />
   <rect x="200" y="50" width="150" height="100" rx="0" ry="0" stroke="black" fill="yellow" stroke-width="2" />
-  <rect x="422" y="141" width="87" height="131" rx="0" ry="0" stroke="black" fill="none" stroke-width="2" />
-  <text x="750" y="175" font-family="Arial" font-size="20" fill="black">hi</text>
-  <text x="645" y="251" font-family="Arial" font-size="20" fill="#aa00ff">hi</text>
+  <rect x="170" y="252" width="93" height="53" rx="20" ry="20" stroke="black" fill="none" stroke-width="2" />
+  <rect x="232" y="289" width="119" height="65" rx="20" ry="20" stroke="black" fill="none" stroke-width="2" />
+  <rect x="192" y="226" width="135" height="56" rx="0" ry="0" stroke="black" fill="none" stroke-width="2" />
+  <rect x="410" y="190" width="53" height="87" rx="0" ry="0" stroke="black" fill="none" stroke-width="2" />
+  <circle cx="335" cy="113" r="176" stroke="black" fill="none" stroke-width="2" />
+  <line x1="125" y1="223" x2="418" y2="338" stroke="black" stroke-width="2" />
+  <line x1="492" y1="164" x2="577" y2="263" stroke="black" stroke-width="2" />
+  <hexagon cx="416" cy="246" rotation="43.741" r="128" stroke="black" fill="none" stroke-width="2" />
+  <polyline points="658,127 657,127 655,127 653,128 652,128 649,128 648,128 647,128 646,128 645,129 644,129 643,130 642,131 640,132 640,133 639,136 637,137 635,139 633,141 632,143 630,145 629,148 628,150 627,153 626,155 625,155 624,157 624,158 624,159 624,160 624,161 624,163 624,166 625,167 626,169 627,171 628,172 631,173 632,174 633,176 634,177 635,177 636,177 637,177 640,178 642,178 644,179 646,180 648,180 650,181 652,182 653,182 655,183 656,183 659,184 662,186 664,186 668,187 670,189 672,189 673,190 674,190 674,191 675,192 676,193 676,194 676,197 676,199 675,201 674,204 672,210 671,212 669,214 668,218 667,220 665,221 664,222 663,222 663,223 662,223 661,224 660,225 659,225 657,227 656,227 655,228 654,228 652,229 651,230 649,230 648,230 647,230 646,230 645,230 644,231 643,231 640,231 639,231 637,231 636,232 634,232 630,232 628,232 626,233 624,233 624,234 623,234 621,234 620,236 619,236 618,237 617,237 617,238 616,240 615,242 615,244 613,247 613,249 611,251 611,253 611,256 611,257 611,259 611,261 612,262 612,263 613,263 613,265 614,266 616,267 617,268 618,268 619,269 621,270 624,271 625,272 627,272 628,272 629,272 631,274 632,274 633,274 634,275 635,275 636,275 637,275 639,275 640,275 640,274 641,274 641,273 643,272 644,271 645,269 646,268 646,267 648,267 648,266 649,266 650,266" stroke="black" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <text x="433" y="431" font-family="Arial" font-size="20" fill="black">hi</text>
+  <text x="600" y="321" font-family="Arial" font-size="20" fill="black">hi</text>
+  <text x="105" y="285" font-family="Arial" font-size="20" fill="#00ff7f">faah</text>
+  <rect x="159" y="392" width="159" height="76" rx="0" ry="0" stroke="#00ff7f" fill="none" stroke-width="2" />
 </svg>

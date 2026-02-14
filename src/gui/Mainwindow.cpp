@@ -11,6 +11,8 @@
 #include <QSpinBox>
 #include <QLabel>
 
+
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     resize(800, 600);
     canvas = new Canvas(this);
@@ -19,41 +21,53 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     // --- TOOLBAR SETUP ---
     QToolBar *toolbar = addToolBar("Tools");
+    toolbar->setIconSize(QSize(32, 32)); // Make icons a bit larger/nicer
+    toolbar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+
+    auto addTool = [&](const QString &name, const QString &iconPath, ToolType type) {
+        // The path starts with ":/" to indicate a Qt Resource
+        QAction *act = toolbar->addAction(QIcon(iconPath), name);
+        act->setToolTip(name); // Show text when hovering
+        connect(act, &QAction::triggered, [this, type]() {
+            canvas->setTool(type);
+        });
+    };
+
 
     // 1. SHAPE TOOLS
-    QAction *actCircle = toolbar->addAction("Circle");
+    QAction *actCircle = toolbar->addAction(QIcon(":/resources/icons/circle.png"), "Circle");
     connect(actCircle, &QAction::triggered, [this]() {
         canvas->setTool(ToolType::Circle);
     });
 
-    QAction *actRect = toolbar->addAction("Rectangle");
+    QAction *actRect = toolbar->addAction(QIcon(":/resources/icons/rectangle.png"), "Rectangle");
     connect(actRect, &QAction::triggered, [this]() {
         canvas->setTool(ToolType::Rectangle);
     });
     
-    QAction *actRound = toolbar->addAction("Rounded Rect");
+    QAction *actRound = toolbar->addAction(QIcon(":/resources/icons/roundedrectangle.png"), "Rounded Rectangle");
     connect(actRound, &QAction::triggered, [this]() { 
         canvas->setTool(ToolType::RoundedRect); 
     });
 
-    QAction *actLine = toolbar->addAction("Line");
+    QAction *actLine = toolbar->addAction(QIcon(":/resources/icons/line.png"), "Line");
     connect(actLine, &QAction::triggered, [this]() { 
         canvas->setTool(ToolType::Line); 
     });
 
-    QAction *actHex = toolbar->addAction("Hexagon");
+    QAction *actHex = toolbar->addAction(QIcon(":/resources/icons/hexagon.png"), "Hexagon");
     connect(actHex, &QAction::triggered, [this]() { 
         canvas->setTool(ToolType::Hexagon); 
     });
 
     // --- NEW: FREEHAND TOOL ---
-    QAction *actFree = toolbar->addAction("Freehand");
+    QAction *actFree = toolbar->addAction(QIcon(":/resources/icons/freehand.png"), "FreeHand");
     connect(actFree, &QAction::triggered, [this]() { 
         canvas->setTool(ToolType::Freehand); 
     });
 
     // --- NEW: TEXT TOOL ---
-    QAction *actText = toolbar->addAction("Text");
+    QAction *actText = toolbar->addAction(QIcon(":/resources/icons/text.png"), "Text");
     connect(actText, &QAction::triggered, [this]() { 
         canvas->setTool(ToolType::Text); 
     });
@@ -61,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     toolbar->addSeparator(); // Visual spacer
 
     // 2. STROKE COLOR BUTTON
-    QAction *actStrokeColor = toolbar->addAction("Stroke Color");
+    QAction *actStrokeColor = toolbar->addAction(QIcon(":/resources/icons/stroke_color.png"), "Stroke Color");
     connect(actStrokeColor, &QAction::triggered, [this]() {
         QColor color = QColorDialog::getColor(Qt::black, this, "Select Stroke Color");
         if (color.isValid()) {
@@ -70,7 +84,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     });
 
     // 3. FILL COLOR BUTTON
-    QAction *actFillColor = toolbar->addAction("Fill Color");
+    QAction *actFillColor = toolbar->addAction(QIcon(":/resources/icons/fill_color.png"), "Fill Color");
     connect(actFillColor, &QAction::triggered, [this]() {
         QColor color = QColorDialog::getColor(Qt::white, this, "Select Fill Color");
         if (color.isValid()) {
