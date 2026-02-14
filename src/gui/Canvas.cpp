@@ -17,6 +17,12 @@
         update(); 
     }
 
+    // Getter for the parser to access shapes
+    std::vector<std::unique_ptr<Object>>& Canvas::getShapes() { 
+        return shapes; 
+    }
+
+    
     void Canvas::paintEvent(QPaintEvent *event) {
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing); // Makes lines smooth

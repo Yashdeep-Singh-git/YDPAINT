@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     for (auto& s : shapes) {
         canvas->addShape(std::move(s));
     }
+    SVGParser::saveFile("./../output.svg", canvas->getShapes());
 }
 
 MainWindow::~MainWindow() {

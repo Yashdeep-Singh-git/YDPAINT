@@ -11,6 +11,9 @@ public:
     // Main function: Reads a file and returns the list of objects
     static std::vector<std::unique_ptr<Object>> parseFile(const std::string& filepath);
 
+    // Add this to your class SVGParser:
+    static void saveFile(const std::string& filepath, const std::vector<std::unique_ptr<Object>>& shapes);
+
 private:
     // Helper: Extracts value from a string (e.g., finds 'cx="100"' -> returns "100")
     static std::string getAttribute(const std::string& tag, const std::string& key);

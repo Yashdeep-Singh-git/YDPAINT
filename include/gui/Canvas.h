@@ -19,6 +19,9 @@ public:
     // Function to add a new shape to the canvas
     void addShape(std::unique_ptr<Object> shape);
 
+    // Getter for the parser to access shapes
+    std::vector<std::unique_ptr<Object>>& getShapes();
+
 protected:
     // The "paint" function called automatically by Qt
     void paintEvent(QPaintEvent *event) override;

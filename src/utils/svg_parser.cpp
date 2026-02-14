@@ -57,3 +57,22 @@ std::vector<std::unique_ptr<Object>> SVGParser::parseFile(const std::string& fil
 
     return objects;
 }
+
+void SVGParser::saveFile(const std::string& filepath, const std::vector<std::unique_ptr<Object>>& shapes) {
+    std::ofstream outFile(filepath);
+    if (!outFile.is_open()) {
+        std::cerr << "Error: Could not open file for writing: " << filepath << std::endl;
+        return;
+    }
+    // 1. Write Header
+    outFile << "<svg width=\"800\" height=\"600\" xmlns=\"http://www.w3.org/2000/svg\">\n";
+    // 2. Loop through all shapes and write their SVG string
+    for (const auto& shape : shapes) {
+        outFile << "  " << shape->toSVG() << "\n";
+    }
+    // 3. Write Footer
+    outFile << "</svg>";
+    
+    outFile.close();
+    std::cout << "File saved successfully to: " << filepath << std::endl;
+}
