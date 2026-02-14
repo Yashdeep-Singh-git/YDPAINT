@@ -12,7 +12,8 @@
 enum class ToolType {
     Select,
     Circle,
-    Rectangle
+    Rectangle,
+    RoundedRect
 };
 
 class Canvas : public QWidget {
@@ -34,6 +35,7 @@ public:
     void setStrokeWidth(int w);
     void setStrokeColor(const std::string& color);
     void setFillColor(const std::string& color);
+    void setcurrentRadius(int r);
 
 protected:
     // The "paint" function called automatically by Qt
@@ -55,6 +57,8 @@ private:
     QPoint currentPoint;  // Where the mouse is right now
 
     int currentStrokeWidth;
+    int currentRadius;
+
     std::string currentStrokeColor;
     std::string currentFillColor;
     

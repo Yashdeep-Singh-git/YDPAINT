@@ -11,6 +11,7 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent), currentTool(ToolType::Select)
     currentStrokeWidth = 2;
     currentStrokeColor = "black";
     currentFillColor = "none";
+    currentRadius = 20;
 
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
@@ -23,6 +24,7 @@ void Canvas::setTool(ToolType t) {
 void Canvas::setStrokeWidth(int w) { currentStrokeWidth = w; }
 void Canvas::setStrokeColor(const std::string& color) { currentStrokeColor = color; }
 void Canvas::setFillColor(const std::string& color) { currentFillColor = color; }
+void Canvas::setcurrentRadius(int r) {currentRadius = r; }
 
 void Canvas::addShape(std::unique_ptr<Object> shape) {
     // 1. Take ownership of the shape and save it
@@ -62,8 +64,14 @@ void Canvas::mouseMoveEvent(QMouseEvent *event) {
             int y = std::min(startPoint.y(), currentPoint.y());
             int w = std::abs(dx);
             int h = std::abs(dy);
-            
             previewShape = std::make_unique<Rectangle>(x, y, w, h, currentStrokeColor, currentFillColor, currentStrokeWidth);
+        }
+        else if (currentTool == ToolType::RoundedRect){
+            int x = std::min(startPoint.x(), currentPoint.x());
+            int y = std::min(startPoint.y(), currentPoint.y());
+            int w = std::abs(dx);
+            int h = std::abs(dy);
+            previewShape = std::make_unique<Rectangle>(x, y, w, h, currentStrokeColor, currentFillColor, currentStrokeWidth , currentRadius , currentRadius);
         }
 
         update(); // Trigger paintEvent to redraw

@@ -32,6 +32,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         canvas->setTool(ToolType::Rectangle);
     });
     
+    QAction *actRound = toolbar->addAction("Rounded Rect");
+    connect(actRound, &QAction::triggered, [this]() { canvas->setTool(ToolType::RoundedRect); });
+
     toolbar->addSeparator(); // Visual spacer
 
     // 1. STROKE COLOR BUTTON
@@ -73,6 +76,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(spinWidth, QOverload<int>::of(&QSpinBox::valueChanged), 
     [this](int newVal) {
         canvas->setStrokeWidth(newVal);
+    });
+
+    toolbar->addWidget(new QLabel(" R: "));
+    QSpinBox *spinR = new QSpinBox();
+    spinR->setRange(1 , 100);
+    spinR->setValue(20);
+    toolbar->addWidget(spinR);
+
+    connect(spinR, QOverload<int>::of(&QSpinBox::valueChanged), 
+    [this](int val) {
+        canvas->setcurrentRadius(val);
     });
 
     // --- LOAD FILE ---

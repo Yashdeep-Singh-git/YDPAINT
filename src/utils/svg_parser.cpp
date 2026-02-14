@@ -47,11 +47,13 @@ std::vector<std::unique_ptr<Object>> SVGParser::parseFile(const std::string& fil
             int y = std::stoi(getAttribute(line, "y"));
             int w = std::stoi(getAttribute(line, "width"));
             int h = std::stoi(getAttribute(line, "height"));
+            int rx = std::stoi(getAttribute(line , "rx"));
+            int ry = std::stoi(getAttribute(line , "ry"));
             std::string fill = getAttribute(line, "fill");
             std::string stroke = getAttribute(line, "stroke");
             int sw = std::stoi(getAttribute(line, "stroke-width"));
 
-            objects.push_back(std::make_unique<Rectangle>(x, y, w, h, stroke, fill, sw));
+            objects.push_back(std::make_unique<Rectangle>(x, y, w, h, stroke, fill, sw , rx , ry));
         }
     }
 
