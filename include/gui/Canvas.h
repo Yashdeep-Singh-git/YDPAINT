@@ -8,6 +8,7 @@
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include "include/models/Object.h"
+#include "include/models/Freehand.h"
 
 enum class ToolType {
     Select,
@@ -15,7 +16,9 @@ enum class ToolType {
     Rectangle,
     RoundedRect,
     Line,
-    Hexagon
+    Hexagon,
+    Freehand,
+    Text
 };
 
 class Canvas : public QWidget {
@@ -60,6 +63,7 @@ private:
 
     int currentStrokeWidth;
     int currentRadius;
+    Freehand* currentFreehand;
 
     std::string currentStrokeColor;
     std::string currentFillColor;

@@ -3,8 +3,11 @@
 #include "include/models/Rectangle.h"
 #include "include/models/Line.h"
 #include "include/models/Hexagon.h"
+#include "include/models/Freehand.h"
+#include "include/models/Text.h"
 #include <QPainter>
 #include <cmath>
+#include <QInputDialog>
 
 
 
@@ -14,6 +17,8 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent), currentTool(ToolType::Select)
     currentStrokeColor = "black";
     currentFillColor = "none";
     currentRadius = 20;
+
+    currentFreehand = nullptr;
 
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
@@ -40,6 +45,38 @@ void Canvas::addShape(std::unique_ptr<Object> shape) {
 void Canvas::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         startPoint = event->pos();
+
+        if (currentTool == ToolType::Text) {
+            bool ok;
+            QString text = QInputDialog::getText(this, "Add Text", "Enter text:", QLineEdit::Normal, "", &ok);
+            if (ok && !text.isEmpty()) {
+                // Create Text Object
+                // Note: Ensure your class name matches (TextObj vs Text)
+                auto t = std::make_unique<TextObj>(
+                    startPoint.x(), startPoint.y(), 
+                    text.toStdString(), currentStrokeColor, 20
+                );
+                shapes.push_back(std::move(t));
+                update();
+            }
+            return; // Done, don't trigger drawing logic
+        }
+
+        // --- NEW: FREEHAND TOOL LOGIC ---
+        if (currentTool == ToolType::Freehand) {
+            std::vector<QPoint> initialPoints = {startPoint};
+            auto poly = std::make_unique<Freehand>(initialPoints, currentStrokeColor, currentStrokeWidth);
+            
+            // 1. Save reference to currentFreehand so we can add points in mouseMove
+            currentFreehand = poly.get();
+            
+            // 2. Move ownership to main list immediately
+            shapes.push_back(std::move(poly));
+            
+            isDrawing = true;
+            return; // Return early
+        }
+
         isDrawing = true;
         previewShape = nullptr; // Reset preview
     }
@@ -49,6 +86,14 @@ void Canvas::mousePressEvent(QMouseEvent *event) {
 void Canvas::mouseMoveEvent(QMouseEvent *event) {
     if ((event->buttons() & Qt::LeftButton) && isDrawing) {
         currentPoint = event->pos();
+
+
+        // --- NEW: FREEHAND UPDATE ---
+        if (currentTool == ToolType::Freehand && currentFreehand) {
+            currentFreehand->addPoint(currentPoint);
+            update();
+            return; // Skip the rest
+        }
 
         // Calculate geometry
         int dx = currentPoint.x() - startPoint.x();
@@ -94,6 +139,14 @@ void Canvas::mouseMoveEvent(QMouseEvent *event) {
 void Canvas::mouseReleaseEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton && isDrawing) {
         // Move the preview shape into the real list
+
+        if (currentTool == ToolType::Freehand) {
+            currentFreehand = nullptr; // Stop tracking
+            isDrawing = false;
+            update();
+            return;
+        }
+
         if (previewShape) {
             shapes.push_back(std::move(previewShape));
             previewShape = nullptr;

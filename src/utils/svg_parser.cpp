@@ -3,9 +3,31 @@
 #include "include/models/Rectangle.h"
 #include "include/models/Line.h"
 #include "include/models/Hexagon.h"
+#include "include/models/Text.h"
+#include "include/models/Freehand.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
+
+std::vector<QPoint> parsePoints(const std::string& pointsStr) {
+    std::vector<QPoint> points;
+    std::stringstream ss(pointsStr);
+    std::string segment;
+
+    // Split by space first: "100,100" "200,200"
+    while (std::getline(ss, segment, ' ')) {
+        if (segment.empty()) continue;
+        
+        // Now find the comma
+        size_t commaPos = segment.find(',');
+        if (commaPos != std::string::npos) {
+            int x = std::stoi(segment.substr(0, commaPos));
+            int y = std::stoi(segment.substr(commaPos + 1));
+            points.emplace_back(x, y);
+        }
+    }
+    return points;
+}
 
 // Helper to extract values like cx="50"
 std::string SVGParser::getAttribute(const std::string& tag, const std::string& key) {
@@ -82,6 +104,42 @@ std::vector<std::unique_ptr<Object>> SVGParser::parseFile(const std::string& fil
 
             // Create Hexagon Object
             objects.push_back(std::make_unique<Hexagon>(cx, cy, r, rotation, stroke, fill, sw));
+        }
+
+        // 5. Check for Freehand (Polyline)
+        else if (line.find("polyline") != std::string::npos) {
+            std::string pointsStr = getAttribute(line, "points");
+            std::vector<QPoint> points = parsePoints(pointsStr);
+            
+            std::string stroke = getAttribute(line, "stroke");
+            int sw = std::stoi(getAttribute(line, "stroke-width"));
+            
+            // Create Freehand Object
+            if (!points.empty()) {
+                objects.push_back(std::make_unique<Freehand>(points, stroke, sw));
+            }
+        }
+
+        // 6. Check for Text
+        else if (line.find("text") != std::string::npos) {
+            int x = std::stoi(getAttribute(line, "x"));
+            int y = std::stoi(getAttribute(line, "y"));
+            int fontSize = std::stoi(getAttribute(line, "font-size"));
+            std::string fill = getAttribute(line, "fill"); // Text color is usually 'fill' in SVG
+            
+            // EXTRACT CONTENT: The text is between ">" and "</text>"
+            // Example: <text ...>Hello World</text>
+            size_t startPos = line.find(">");
+            size_t endPos = line.find("</text>");
+            
+            std::string content = "";
+            if (startPos != std::string::npos && endPos != std::string::npos) {
+                // +1 to skip the '>'
+                content = line.substr(startPos + 1, endPos - startPos - 1);
+            }
+            
+            // Create Text Object
+            objects.push_back(std::make_unique<TextObj>(x, y, content, fill, fontSize));
         }
 
     }

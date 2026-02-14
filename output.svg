@@ -1,7 +1,7 @@
 <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
   <circle cx="100" cy="100" r="50" stroke="red" fill="blue" stroke-width="3" />
   <rect x="200" y="50" width="150" height="100" rx="0" ry="0" stroke="black" fill="yellow" stroke-width="2" />
-  <hexagon cx="451" cy="157" rotation="-169.695" r="67" stroke="black" fill="none" stroke-width="2" />
-  <hexagon cx="435" cy="362" rotation="129.908" r="143" stroke="black" fill="none" stroke-width="2" />
-  <hexagon cx="209" cy="366" rotation="-178.315" r="34" stroke="black" fill="#d0ff85" stroke-width="2" />
+  <rect x="422" y="141" width="87" height="131" rx="0" ry="0" stroke="black" fill="none" stroke-width="2" />
+  <text x="750" y="175" font-family="Arial" font-size="20" fill="black">hi</text>
+  <text x="645" y="251" font-family="Arial" font-size="20" fill="#aa00ff">hi</text>
 </svg>
