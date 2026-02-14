@@ -1,6 +1,8 @@
 #include "include/gui/Canvas.h"
 #include "include/models/Circle.h"
 #include "include/models/Rectangle.h"
+#include "include/models/Line.h"
+#include "include/models/Hexagon.h"
 #include <QPainter>
 #include <cmath>
 
@@ -72,6 +74,16 @@ void Canvas::mouseMoveEvent(QMouseEvent *event) {
             int w = std::abs(dx);
             int h = std::abs(dy);
             previewShape = std::make_unique<Rectangle>(x, y, w, h, currentStrokeColor, currentFillColor, currentStrokeWidth , currentRadius , currentRadius);
+        }
+        else if (currentTool == ToolType::Line){
+            previewShape = std::make_unique<Line> (startPoint.x() , startPoint.y() , currentPoint.x(), currentPoint.y(), currentStrokeColor, currentStrokeWidth);
+        }
+        else if (currentTool == ToolType::Hexagon){
+            int dx = currentPoint.x() - startPoint.x();
+            int dy = currentPoint.y() - startPoint.y();
+            int radius = static_cast<int>(std::sqrt(dx*dx + dy*dy));
+            double angle = qRadiansToDegrees(qAtan2(dy , dx));
+            previewShape = std::make_unique<Hexagon>( startPoint.x(), startPoint.y(), radius, angle , currentStrokeColor, currentFillColor, currentStrokeWidth );
         }
 
         update(); // Trigger paintEvent to redraw

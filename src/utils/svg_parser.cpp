@@ -1,6 +1,8 @@
 #include "include/utils/svg_parser.h"
 #include "include/models/Circle.h"
 #include "include/models/Rectangle.h"
+#include "include/models/Line.h"
+#include "include/models/Hexagon.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -55,6 +57,33 @@ std::vector<std::unique_ptr<Object>> SVGParser::parseFile(const std::string& fil
 
             objects.push_back(std::make_unique<Rectangle>(x, y, w, h, stroke, fill, sw , rx , ry));
         }
+        else if (line.find("line") != std::string::npos) {
+            int x1 = std::stoi(getAttribute(line, "x1"));
+            int y1 = std::stoi(getAttribute(line, "y1"));
+            int x2 = std::stoi(getAttribute(line, "x2"));
+            int y2 = std::stoi(getAttribute(line, "y2"));
+            
+            std::string stroke = getAttribute(line, "stroke");
+            int sw = std::stoi(getAttribute(line, "stroke-width"));
+
+            // Create Line Object
+            objects.push_back(std::make_unique<Line>(x1, y1, x2, y2, stroke, sw));
+        }
+
+        else if (line.find("hexagon") != std::string::npos) {
+            int cx = std::stoi(getAttribute(line, "cx"));
+            int cy = std::stoi(getAttribute(line, "cy"));
+            int r  = std::stoi(getAttribute(line, "r"));
+            
+            std::string fill = getAttribute(line, "fill");
+            std::string stroke = getAttribute(line, "stroke");
+            int sw = std::stoi(getAttribute(line, "stroke-width"));
+            double rotation = std::stod(getAttribute(line , "rotation"));
+
+            // Create Hexagon Object
+            objects.push_back(std::make_unique<Hexagon>(cx, cy, r, rotation, stroke, fill, sw));
+        }
+
     }
 
     return objects;

@@ -13,7 +13,9 @@ enum class ToolType {
     Select,
     Circle,
     Rectangle,
-    RoundedRect
+    RoundedRect,
+    Line,
+    Hexagon
 };
 
 class Canvas : public QWidget {

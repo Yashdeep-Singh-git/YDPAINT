@@ -35,6 +35,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     QAction *actRound = toolbar->addAction("Rounded Rect");
     connect(actRound, &QAction::triggered, [this]() { canvas->setTool(ToolType::RoundedRect); });
 
+    QAction *actLine = toolbar->addAction("Line");
+    connect(actLine, &QAction::triggered, [this]() { canvas->setTool(ToolType::Line); });
+
+    QAction *actHex = toolbar->addAction("Hexagon");
+    connect(actHex, &QAction::triggered, [this]() { canvas->setTool(ToolType::Hexagon); });
+
     toolbar->addSeparator(); // Visual spacer
 
     // 1. STROKE COLOR BUTTON
