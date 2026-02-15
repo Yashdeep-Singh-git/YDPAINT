@@ -10,6 +10,9 @@ public:
     void draw(QPainter &painter) override;
     std::string toSVG() override;
     bool isHit(const QPoint& p) override; // Hardest part!
+
+    void resize(int dx , int dy) override;
+    QRect getBounds() const override;
 };
 
 #endif

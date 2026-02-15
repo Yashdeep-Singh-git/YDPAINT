@@ -18,6 +18,10 @@ class Object{
     virtual std::string toSVG() = 0;
     virtual bool isHit(const QPoint& qpoint) = 0;
 
+    virtual void resize(int dx , int dy) = 0;
+    virtual QRect getBounds() const = 0;
+    void move(int dx , int dy);
+
     void setpos(int x , int y);
     void setStroke_color(const std::string &stroke_color);
     void setFill_color(const std::string &fill_color);

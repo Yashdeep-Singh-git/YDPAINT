@@ -17,3 +17,6 @@ void Object::setFill_color(const std::string &fill_color){
 void Object::setStroke_width(int stroke_width){
     _stroke_width = stroke_width;
 }
+void Object::move(int dx , int dy){
+    _x += dx; _y += dy;
+}

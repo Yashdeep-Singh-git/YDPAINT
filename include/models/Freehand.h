@@ -12,6 +12,9 @@ public:
     
     // Helper to add points while drawing
     void addPoint(const QPoint& p) { _points.push_back(p); }
+
+    void resize(int dx , int dy) override;
+    QRect getBounds() const override;
 };
 
 #endif

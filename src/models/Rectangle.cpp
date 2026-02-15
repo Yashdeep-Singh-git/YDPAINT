@@ -38,3 +38,12 @@ bool Rectangle::isHit(const QPoint& qp){
     int tx = qp.x(); int ty = qp.y();
     return (tx>=_x && ty>=_y && tx<=_x+_width && ty<=_y+_height);
 }
+
+void Rectangle::resize(int dx , int dy){
+    _width += dx; _height += dy;
+    if (_width < 10) _width = 10;
+    if (_height < 10) _height = 10;
+}
+QRect Rectangle::getBounds() const{
+    return QRect(_x , _y , _width , _height);
+}

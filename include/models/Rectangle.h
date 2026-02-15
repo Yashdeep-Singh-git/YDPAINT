@@ -12,6 +12,9 @@ class Rectangle : public Object {
     void draw(QPainter &qpainter) override;
     std::string toSVG() override;
     bool isHit(const QPoint& q) override;
+
+    void resize(int dx , int dy) override;
+    QRect getBounds() const override;
 };
 
 #endif

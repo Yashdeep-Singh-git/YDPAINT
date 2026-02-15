@@ -1,6 +1,7 @@
 #include "include/models/Circle.h"
 #include <string>
 #include <sstream>
+#include <cmath>
 
 Circle::Circle(int cx , int cy , int radius , const std::string &stroke , const std::string &fill , int width) : Object(cx,cy,stroke,fill,width), _radius(radius) {}
 
@@ -36,4 +37,12 @@ std::string Circle::toSVG() {
 bool Circle::isHit(const QPoint& p){
     long long dx = p.x()- _x; long long dy = p.y()- _y;
     return (dx*dx+dy*dy <= 1LL*_radius*_radius);
+}
+
+void Circle::resize(int dx , int dy){
+    _radius += dx;
+    if (_radius < 5) _radius = 5;
+}
+QRect Circle::getBounds() const {
+    return QRect(_x - _radius , _y - _radius , _radius*2 , _radius * 2);
 }

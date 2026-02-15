@@ -55,3 +55,9 @@ bool TextObj::isHit(const QPoint& p) {
 
     return xHit && yHit;
 }
+
+
+void TextObj::resize(int dx , int dy){
+}
+QRect TextObj::getBounds() const {
+}

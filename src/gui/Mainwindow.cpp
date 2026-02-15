@@ -33,46 +33,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         });
     };
 
+    addTool("Select",  ":/resources/icons/cursor.png" , ToolType::Select);
+    toolbar->addSeparator(); toolbar->addSeparator();
 
-    // 1. SHAPE TOOLS
-    QAction *actCircle = toolbar->addAction(QIcon(":/resources/icons/circle.png"), "Circle");
-    connect(actCircle, &QAction::triggered, [this]() {
-        canvas->setTool(ToolType::Circle);
-    });
+    addTool("Circle",  ":/resources/icons/circle.png" , ToolType::Circle);
+    addTool("Rectangle",  ":/resources/icons/rectangle.png" , ToolType::Rectangle);
+    addTool("Rounded Rectangle",  ":/resources/icons/roundedrectangle.png" , ToolType::RoundedRect);
+    addTool("Line",  ":/resources/icons/line.png" , ToolType::Line);
+    addTool("Hexagon",  ":/resources/icons/hexagon.png" , ToolType::Hexagon);
+    addTool("Free Hand",  ":/resources/icons/freehand.png" , ToolType::Freehand);
+    addTool("Text",  ":/resources/icons/text.png" , ToolType::Text);
 
-    QAction *actRect = toolbar->addAction(QIcon(":/resources/icons/rectangle.png"), "Rectangle");
-    connect(actRect, &QAction::triggered, [this]() {
-        canvas->setTool(ToolType::Rectangle);
-    });
+    toolbar->addSeparator(); toolbar->addSeparator();
     
-    QAction *actRound = toolbar->addAction(QIcon(":/resources/icons/roundedrectangle.png"), "Rounded Rectangle");
-    connect(actRound, &QAction::triggered, [this]() { 
-        canvas->setTool(ToolType::RoundedRect); 
-    });
-
-    QAction *actLine = toolbar->addAction(QIcon(":/resources/icons/line.png"), "Line");
-    connect(actLine, &QAction::triggered, [this]() { 
-        canvas->setTool(ToolType::Line); 
-    });
-
-    QAction *actHex = toolbar->addAction(QIcon(":/resources/icons/hexagon.png"), "Hexagon");
-    connect(actHex, &QAction::triggered, [this]() { 
-        canvas->setTool(ToolType::Hexagon); 
-    });
-
-    // --- NEW: FREEHAND TOOL ---
-    QAction *actFree = toolbar->addAction(QIcon(":/resources/icons/freehand.png"), "FreeHand");
-    connect(actFree, &QAction::triggered, [this]() { 
-        canvas->setTool(ToolType::Freehand); 
-    });
-
-    // --- NEW: TEXT TOOL ---
-    QAction *actText = toolbar->addAction(QIcon(":/resources/icons/text.png"), "Text");
-    connect(actText, &QAction::triggered, [this]() { 
-        canvas->setTool(ToolType::Text); 
-    });
-
-    toolbar->addSeparator(); // Visual spacer
 
     // 2. STROKE COLOR BUTTON
     QAction *actStrokeColor = toolbar->addAction(QIcon(":/resources/icons/stroke_color.png"), "Stroke Color");
@@ -98,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         canvas->setFillColor("none");
     });
 
-    toolbar->addSeparator();
+    toolbar->addSeparator(); toolbar->addSeparator();
 
     // 5. THICKNESS SPINNER
     toolbar->addWidget(new QLabel(" Width: ")); 

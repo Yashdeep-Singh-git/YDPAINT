@@ -21,6 +21,12 @@ enum class ToolType {
     Text
 };
 
+enum class InteractionMode {
+    None,
+    Moving,
+    Resizing
+};
+
 class Canvas : public QWidget {
     Q_OBJECT // Required by Qt for signals/slots to work
 
@@ -42,6 +48,8 @@ public:
     void setFillColor(const std::string& color);
     void setcurrentRadius(int r);
 
+    void bringToFront(int i);
+
 protected:
     // The "paint" function called automatically by Qt
     void paintEvent(QPaintEvent *event) override;
@@ -60,6 +68,10 @@ private:
     bool isDrawing;
     QPoint startPoint;    // Where you first clicked
     QPoint currentPoint;  // Where the mouse is right now
+
+    Object* selectedShape;  // selection variables
+    QPoint lastmousepos;
+    InteractionMode interactionMode;
 
     int currentStrokeWidth;
     int currentRadius;

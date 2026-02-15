@@ -85,3 +85,8 @@ bool Freehand::isHit(const QPoint& p) {
 
     return false;
 }
+
+void Freehand::resize(int dx , int dy){
+}
+QRect Freehand::getBounds() const {
+}

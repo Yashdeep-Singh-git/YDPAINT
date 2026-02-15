@@ -10,5 +10,6 @@
         <file>resources/icons/text.png</file>
         <file>resources/icons/stroke_color.png</file>
         <file>resources/icons/fill_color.png</file>
+        <file>resources/icons/cursor.png</file>
     </qresource>
 </RCC>

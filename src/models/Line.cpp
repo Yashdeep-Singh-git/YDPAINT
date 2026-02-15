@@ -74,3 +74,9 @@ bool Line::isHit(const QPoint& p) {
     
     return distSq <= (tolerance * tolerance);
 }
+
+
+void Line::resize(int dx , int dy){
+}
+QRect Line::getBounds() const {
+}

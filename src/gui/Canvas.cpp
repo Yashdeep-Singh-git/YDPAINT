@@ -17,13 +17,26 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent), currentTool(ToolType::Select)
     currentStrokeColor = "black";
     currentFillColor = "none";
     currentRadius = 20;
-
+    
     currentFreehand = nullptr;
-
+    
+    selectedShape = nullptr; // selection
+    this->setTool(ToolType::Select);
+    interactionMode = InteractionMode::None;
+    
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
 }
 
+void Canvas::bringToFront(int index) {
+    if (index >= shapes.size() - 1) return; 
+    auto temp = std::move(shapes[index]);
+
+    shapes.erase(shapes.begin() + index);
+
+    shapes.push_back(std::move(temp));
+    selectedShape = shapes.back().get();
+}
 void Canvas::setTool(ToolType t) {
     currentTool = t;
 }
@@ -34,17 +47,37 @@ void Canvas::setFillColor(const std::string& color) { currentFillColor = color; 
 void Canvas::setcurrentRadius(int r) {currentRadius = r; }
 
 void Canvas::addShape(std::unique_ptr<Object> shape) {
-    // 1. Take ownership of the shape and save it
     shapes.push_back(std::move(shape));
     
-    // 2. Trigger a screen refresh (calls paintEvent internally)
     update(); 
 }
 
 // 1. MOUSE PRESS: Start the drawing
 void Canvas::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) {
+    if ((event->button() == Qt::LeftButton) || (event->button() == Qt::RightButton)) {
         startPoint = event->pos();
+        lastmousepos = event->pos();
+
+        if (currentTool == ToolType::Select) {
+            selectedShape = nullptr; // Deselect first
+            interactionMode = InteractionMode::None;
+
+            // Loop Backwards (Top to Bottom)
+            
+            for (int i=shapes.size()-1; i>=0; i--) {
+                if (shapes[i]->isHit(event->pos())) {
+                    selectedShape = (&shapes[i])->get(); // Get raw pointer
+                    interactionMode = InteractionMode::Moving;
+                    bringToFront(i);
+                    QRect bounds = selectedShape->getBounds();
+                    isDrawing = true;
+                    update();
+                    break; // Stop looking once we found one
+                }
+            }
+            update(); // Redraw to show selection box
+            return;
+        }
 
         if (currentTool == ToolType::Text) {
             bool ok;
@@ -84,7 +117,7 @@ void Canvas::mousePressEvent(QMouseEvent *event) {
 
 // 2. MOUSE MOVE: Update the preview shape (Rubber Band Effect)
 void Canvas::mouseMoveEvent(QMouseEvent *event) {
-    if ((event->buttons() & Qt::LeftButton) && isDrawing) {
+    if ((event->buttons()) && isDrawing) {
         currentPoint = event->pos();
 
 
@@ -130,6 +163,23 @@ void Canvas::mouseMoveEvent(QMouseEvent *event) {
             double angle = qRadiansToDegrees(qAtan2(dy , dx));
             previewShape = std::make_unique<Hexagon>( startPoint.x(), startPoint.y(), radius, angle , currentStrokeColor, currentFillColor, currentStrokeWidth );
         }
+        else if (currentTool == ToolType::Select && selectedShape) {
+            QPoint currentPos = event->pos();
+            int dx = currentPos.x() - lastmousepos.x();
+            int dy = currentPos.y() - lastmousepos.y();
+
+            if (event->buttons() & Qt::LeftButton) {
+                // Left Click Drag = MOVE
+                selectedShape->move(dx, dy);
+            } 
+            if (event->buttons() & Qt::RightButton) {
+                // Right Click Drag = RESIZE (Simple shortcut implementation)
+                selectedShape->resize(dx, dy);
+            }
+
+            lastmousepos = currentPos; // Update for next frame
+            update(); // Redraw
+        }
 
         update(); // Trigger paintEvent to redraw
     }
@@ -137,7 +187,7 @@ void Canvas::mouseMoveEvent(QMouseEvent *event) {
 
 // 3. MOUSE RELEASE: Finalize the shape
 void Canvas::mouseReleaseEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton && isDrawing) {
+    if ( isDrawing) {
         // Move the preview shape into the real list
 
         if (currentTool == ToolType::Freehand) {
@@ -170,6 +220,22 @@ void Canvas::paintEvent(QPaintEvent *event) {
     // Draw all saved shapes
     for (const auto& shape : shapes) {
         shape->draw(painter);
+    }
+
+    if (selectedShape) {
+        QRect bounds = selectedShape->getBounds();
+        
+        // Style: Dashed Blue Line
+        QPen selPen(Qt::blue, 2, Qt::DashLine);
+        painter.setPen(selPen);
+        painter.setBrush(Qt::NoBrush);
+        
+        // Draw Rect with some padding
+        painter.drawRect(bounds.adjusted(-5, -5, 5, 5));
+
+        // Draw Resize Handle (Small square at bottom right)
+        painter.setBrush(Qt::blue);
+        painter.drawRect(bounds.right() + 5 - 6, bounds.bottom() + 5 - 6, 6, 6);
     }
 
     // Draw the "ghost" shape while dragging

@@ -63,3 +63,9 @@ bool Hexagon::isHit(const QPoint& p) {
     // But full radius is usually safer for UI selection
     return (dx * dx + dy * dy <= 1LL * _radius * _radius);
 }
+
+
+void Hexagon::resize(int dx , int dy){
+}
+QRect Hexagon::getBounds() const {
+}
