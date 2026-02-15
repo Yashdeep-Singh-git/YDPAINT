@@ -10,6 +10,10 @@
 #include <QColorDialog>
 #include <QSpinBox>
 #include <QLabel>
+#include <QMenuBar>
+#include <QMenu>
+#include <QFileDialog> // For opening file explorer
+#include <QMessageBox> // For error messages
 
 
 
@@ -17,7 +21,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     resize(800, 600);
     canvas = new Canvas(this);
     setCentralWidget(canvas);
-    currentFile = "./../sample.svg";
+
+    createMenus();
+
+    // currentFile = "./../sample.svg";
+
+    // Initialize as empty
+    currentFile = ""; 
+    
 
     // --- TOOLBAR SETUP ---
     QToolBar *toolbar = addToolBar("Tools");
@@ -98,16 +109,136 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     });
 
     // --- LOAD FILE ---
-    auto loadedShapes = SVGParser::parseFile(currentFile);
-    for(auto& s : loadedShapes) {
-        canvas->addShape(std::move(s));
-    }
+    // auto loadedShapes = SVGParser::parseFile(currentFile);
+    // for(auto& s : loadedShapes) {
+    //     canvas->addShape(std::move(s));
+    // }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-    SVGParser::saveFile("./../output.svg", canvas->getShapes()); 
-    event->accept(); 
+
+    if (maybeSave())
+        event->accept();
+    else
+        event->ignore();
 }
+
 
 MainWindow::~MainWindow() {
 }
+
+void MainWindow::createMenus() {
+    // 1. Create the "File" Menu
+    QMenu *fileMenu = menuBar()->addMenu("&File");
+
+    QAction *newAct = new QAction("&New", this);
+    newAct->setShortcut(QKeySequence::New); // Ctrl+N
+    connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
+    fileMenu->addAction(newAct);
+
+    // 2. Add "Open" Action
+    QAction *openAct = new QAction("&Open", this);
+    openAct->setShortcut(QKeySequence::Open); // Ctrl+O
+    connect(openAct, &QAction::triggered, this, &MainWindow::openFile);
+    fileMenu->addAction(openAct);
+
+    // 3. Add "Save As" Action
+    QAction *saveAct = new QAction("&Save As...", this);
+    saveAct->setShortcut(QKeySequence::Save); // Ctrl+S
+    connect(saveAct, &QAction::triggered, this, &MainWindow::saveFile);
+    fileMenu->addAction(saveAct);
+
+    fileMenu->addSeparator();
+
+    // 4. Add "Exit" Action
+    QAction *exitAct = new QAction("E&xit", this);
+    exitAct->setShortcut(QKeySequence::Quit); // Ctrl+Q
+    connect(exitAct, &QAction::triggered, this, &QWidget::close);
+    fileMenu->addAction(exitAct);
+}
+
+void MainWindow::openFile() {
+
+    if (!maybeSave())
+        return;
+
+    QString fileName = QFileDialog::getOpenFileName(
+        this, "Open SVG", "", "SVG Files (*.svg)"
+    );
+
+    if (fileName.isEmpty())
+        return;
+
+    canvas->clearShapes();
+
+    auto loadedShapes = SVGParser::parseFile(fileName.toStdString());
+
+    for (auto& s : loadedShapes) {
+        canvas->addShape(std::move(s));
+    }
+
+    currentFile = fileName.toStdString();
+}
+
+
+
+void MainWindow::saveFile() {
+    // Open Save Dialog
+    QString fileName = QFileDialog::getSaveFileName(this, "Save SVG", "", "SVG Files (*.svg)");
+
+    if (fileName.isEmpty()) return; // User cancelled
+
+    // Call our existing helper
+    SVGParser::saveFile(fileName.toStdString(), canvas->getShapes());
+
+    // Update current file path
+    currentFile = fileName.toStdString();
+}
+
+void MainWindow::newFile() {
+
+    if (!maybeSave())
+        return;
+
+    canvas->clearShapes();
+    currentFile = "";
+}
+
+
+
+bool MainWindow::maybeSave() {
+
+    // If canvas is empty → nothing to save
+    if (canvas->getShapes().empty())
+        return true;
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(
+        this,
+        "Save Changes?",
+        "Do you want to save the current document before proceeding?",
+        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel
+    );
+
+    if (reply == QMessageBox::Save) {
+
+        // If file already has name → overwrite
+        if (!currentFile.empty()) {
+            SVGParser::saveFile(currentFile, canvas->getShapes());
+        }
+        else {
+            saveFile();  // Open Save dialog
+            if (currentFile.empty())
+                return false;  // User cancelled Save dialog
+        }
+
+        return true;
+    }
+    else if (reply == QMessageBox::Discard) {
+        return true;
+    }
+    else {
+        return false;  // Cancel
+    }
+}
+

@@ -8,24 +8,28 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 std::vector<QPoint> parsePoints(const std::string& pointsStr) {
     std::vector<QPoint> points;
-    std::stringstream ss(pointsStr);
-    std::string segment;
+    std::string cleanStr = pointsStr;
 
-    // Split by space first: "100,100" "200,200"
-    while (std::getline(ss, segment, ' ')) {
-        if (segment.empty()) continue;
-        
-        // Now find the comma
-        size_t commaPos = segment.find(',');
-        if (commaPos != std::string::npos) {
-            int x = std::stoi(segment.substr(0, commaPos));
-            int y = std::stoi(segment.substr(commaPos + 1));
-            points.emplace_back(x, y);
-        }
+    // 1. Robustness: Replace ALL commas with spaces
+    // "100,100 200,200" -> "100 100 200 200"
+    std::replace(cleanStr.begin(), cleanStr.end(), ',', ' ');
+
+    // 2. Use stringstream to read numbers sequentially
+    // This automatically skips extra spaces, tabs, and newlines
+    std::stringstream ss(cleanStr);
+    
+    // Use double to safely read coordinates (SVG often has decimals like 10.5)
+    // even if we truncate them to int for QPoint later.
+    double x, y;
+    
+    while (ss >> x >> y) { 
+        points.emplace_back(static_cast<int>(x), static_cast<int>(y));
     }
+
     return points;
 }
 
@@ -79,18 +83,6 @@ std::vector<std::unique_ptr<Object>> SVGParser::parseFile(const std::string& fil
 
             objects.push_back(std::make_unique<Rectangle>(x, y, w, h, stroke, fill, sw , rx , ry));
         }
-        else if (line.find("line") != std::string::npos) {
-            int x1 = std::stoi(getAttribute(line, "x1"));
-            int y1 = std::stoi(getAttribute(line, "y1"));
-            int x2 = std::stoi(getAttribute(line, "x2"));
-            int y2 = std::stoi(getAttribute(line, "y2"));
-            
-            std::string stroke = getAttribute(line, "stroke");
-            int sw = std::stoi(getAttribute(line, "stroke-width"));
-
-            // Create Line Object
-            objects.push_back(std::make_unique<Line>(x1, y1, x2, y2, stroke, sw));
-        }
 
         else if (line.find("hexagon") != std::string::npos) {
             int cx = std::stoi(getAttribute(line, "cx"));
@@ -140,6 +132,18 @@ std::vector<std::unique_ptr<Object>> SVGParser::parseFile(const std::string& fil
             
             // Create Text Object
             objects.push_back(std::make_unique<TextObj>(x, y, content, fill, fontSize));
+        }
+        else if (line.find("line") != std::string::npos) {
+            int x1 = std::stoi(getAttribute(line, "x1"));
+            int y1 = std::stoi(getAttribute(line, "y1"));
+            int x2 = std::stoi(getAttribute(line, "x2"));
+            int y2 = std::stoi(getAttribute(line, "y2"));
+            
+            std::string stroke = getAttribute(line, "stroke");
+            int sw = std::stoi(getAttribute(line, "stroke-width"));
+
+            // Create Line Object
+            objects.push_back(std::make_unique<Line>(x1, y1, x2, y2, stroke, sw));
         }
 
     }

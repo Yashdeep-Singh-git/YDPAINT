@@ -45,6 +45,17 @@ void Canvas::setStrokeWidth(int w) { currentStrokeWidth = w; }
 void Canvas::setStrokeColor(const std::string& color) { currentStrokeColor = color; }
 void Canvas::setFillColor(const std::string& color) { currentFillColor = color; }
 void Canvas::setcurrentRadius(int r) {currentRadius = r; }
+void Canvas::clearShapes() {
+    shapes.clear();
+
+    selectedShape = nullptr;
+    currentFreehand = nullptr;
+    previewShape = nullptr;
+
+    isDrawing = false;
+
+    update();
+}
 
 void Canvas::addShape(std::unique_ptr<Object> shape) {
     shapes.push_back(std::move(shape));
@@ -184,6 +195,7 @@ void Canvas::mouseMoveEvent(QMouseEvent *event) {
         update(); // Trigger paintEvent to redraw
     }
 }
+
 
 // 3. MOUSE RELEASE: Finalize the shape
 void Canvas::mouseReleaseEvent(QMouseEvent *event) {

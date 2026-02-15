@@ -2,6 +2,10 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <QMenuBar>
+#include <QMenu>
+#include <QAction>
+
 #include "include/gui/Canvas.h" 
 
 class MainWindow : public QMainWindow {
@@ -17,6 +21,11 @@ protected:
 private:
     Canvas* canvas; // The drawing area
     std::string currentFile;
+    void openFile();
+    void saveFile();
+    void createMenus();
+    void newFile();
+    bool maybeSave();
 };
 
 #endif // MAINWINDOW_H

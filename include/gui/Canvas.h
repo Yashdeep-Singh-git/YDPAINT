@@ -49,6 +49,7 @@ public:
     void setcurrentRadius(int r);
 
     void bringToFront(int i);
+    void clearShapes();
 
 protected:
     // The "paint" function called automatically by Qt
