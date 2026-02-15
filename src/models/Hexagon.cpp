@@ -65,7 +65,16 @@ bool Hexagon::isHit(const QPoint& p) {
 }
 
 
-void Hexagon::resize(int dx , int dy){
+void Hexagon::resize(int dx, int dy) {
+    // Use the larger movement to determine growth/shrink
+    // (If dx is big, use dx. If dy is big, use dy).
+    int change = (std::abs(dx) > std::abs(dy)) ? dx : dy;
+    
+    _radius += change;
+    if (_radius < 5) _radius = 5; // Minimum size constraint
 }
+
 QRect Hexagon::getBounds() const {
+    // Box centered at (_x, _y) with side length 2*radius
+    return QRect(_x - _radius, _y - _radius, _radius * 2, _radius * 2);
 }

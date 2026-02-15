@@ -1,33 +1,35 @@
 #include "include/models/Freehand.h"
 #include <sstream>
 #include <cmath>
-#include <algorithm> // for std::max, std::min
+#include <algorithm>
+#include <limits> 
 
 // Constructor
 Freehand::Freehand(const std::vector<QPoint>& points, std::string stroke, int width)
-    : Object(0, 0, stroke, "none", width), _points(points) 
+    : Object(0, 0, stroke, "none", width) 
 {
-    // We set base x,y to 0 because a polyline is defined by absolute points, 
-    // not relative to a single anchor.
-    if (!points.empty()) {
-        _x = points[0].x();
-        _y = points[0].y();
+    // Convert QPoint (int) to QPointF (double)
+    for(const auto& p : points) {
+        _points.push_back(QPointF(p));
+    }
+
+    if (!_points.empty()) {
+        _x = static_cast<int>(_points[0].x());
+        _y = static_cast<int>(_points[0].y());
     }
 }
 
 void Freehand::draw(QPainter &painter) {
     if (_points.empty()) return;
 
-    // 1. Setup Pen
     QColor sColor(_stroke_color.c_str());
     QPen pen(sColor, _stroke_width);
-    pen.setCapStyle(Qt::RoundCap);  // Makes ends smooth
-    pen.setJoinStyle(Qt::RoundJoin); // Makes corners smooth
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setJoinStyle(Qt::RoundJoin);
     painter.setPen(pen);
-    
-    painter.setBrush(Qt::NoBrush); // Freehand lines have no fill
+    painter.setBrush(Qt::NoBrush);
 
-    // 2. Draw all points as a single connected path
+    // QPainter can draw QPointF arrays directly!
     painter.drawPolyline(_points.data(), _points.size());
 }
 
@@ -35,12 +37,10 @@ std::string Freehand::toSVG() {
     std::stringstream out;
     out << "<polyline points=\"";
     
-    // Output format: "x1,y1 x2,y2 x3,y3"
     for (size_t i = 0; i < _points.size(); ++i) {
+        // Output as plain numbers (SVG handles decimals fine)
         out << _points[i].x() << "," << _points[i].y();
-        if (i < _points.size() - 1) {
-            out << " "; // Space between coordinate pairs
-        }
+        if (i < _points.size() - 1) out << " ";
     }
     
     out << "\" stroke=\"" << _stroke_color << "\" fill=\"none\" "
@@ -53,14 +53,12 @@ std::string Freehand::toSVG() {
 bool Freehand::isHit(const QPoint& p) {
     if (_points.size() < 2) return false;
 
-    // Tolerance: Stroke width / 2 + Buffer (5 pixels)
     double threshold = (_stroke_width / 2.0) + 5.0;
     double thresholdSq = threshold * threshold;
 
-    // Check distance to every segment of the polyline
     for (size_t i = 0; i < _points.size() - 1; ++i) {
-        QPoint p1 = _points[i];
-        QPoint p2 = _points[i+1];
+        QPointF p1 = _points[i]; // QPointF
+        QPointF p2 = _points[i+1]; // QPointF
 
         double px = p.x(); double py = p.y();
         double x1 = p1.x(); double y1 = p1.y();
@@ -71,7 +69,6 @@ bool Freehand::isHit(const QPoint& p) {
 
         if (dx == 0 && dy == 0) continue;
 
-        // Project point onto line segment (same math as Line.cpp)
         double t = ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy);
         t = std::max(0.0, std::min(1.0, t));
 
@@ -82,11 +79,70 @@ bool Freehand::isHit(const QPoint& p) {
 
         if (distSq <= thresholdSq) return true;
     }
-
     return false;
 }
 
-void Freehand::resize(int dx , int dy){
+// THE FIXED RESIZE FUNCTION
+void Freehand::resize(int dx, int dy) {
+    if (_points.empty()) return;
+
+    // 1. Calculate Bounds
+    double minX = _points[0].x();
+    double maxX = _points[0].x();
+    double minY = _points[0].y();
+    double maxY = _points[0].y();
+
+    for (const auto &p : _points) {
+        if (p.x() < minX) minX = p.x();
+        if (p.x() > maxX) maxX = p.x();
+        if (p.y() < minY) minY = p.y();
+        if (p.y() > maxY) maxY = p.y();
+    }
+
+    double width = maxX - minX;
+    double height = maxY - minY;
+
+    // 2. Safety Check (Prevent Division by Zero)
+    // If width is 0 (vertical line), we can't stretch width, treat as 1
+    if ((width < 1 && dx<0) || (width+dx < 0.1)) return;
+    if ((height < 1 && dy<0) || (height+dy < 0.1)) return ;
+
+    // 3. Apply Scaling
+    // We update the QPointF values directly. 
+    // Because they are doubles, they keep the fractional changes!
+    for (auto &p : _points) {
+        double relativeX = (p.x() - minX) / width;
+        double relativeY = (p.y() - minY) / height;
+
+        p.setX(p.x() + relativeX * dx);
+        p.setY(p.y() + relativeY * dy);
+    }
 }
+
 QRect Freehand::getBounds() const {
+    if (_points.empty()) return QRect();
+
+    // Reset limits for standard int QRect
+    double minX = std::numeric_limits<double>::max();
+    double minY = std::numeric_limits<double>::max();
+    double maxX = std::numeric_limits<double>::lowest();
+    double maxY = std::numeric_limits<double>::lowest();
+
+    for (const auto& p : _points) {
+        if (p.x() < minX) minX = p.x();
+        if (p.y() < minY) minY = p.y();
+        if (p.x() > maxX) maxX = p.x();
+        if (p.y() > maxY) maxY = p.y();
+    }
+
+    // Return as integer QRect
+    return QRect(static_cast<int>(minX), static_cast<int>(minY), 
+                 static_cast<int>(maxX - minX), static_cast<int>(maxY - minY));
+}
+
+void Freehand::move(int dx, int dy) {
+    for (auto& p : _points) {
+        p.setX(p.x() + dx);
+        p.setY(p.y() + dy);
+    }
 }

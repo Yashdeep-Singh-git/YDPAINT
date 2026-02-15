@@ -20,7 +20,7 @@ class Object{
 
     virtual void resize(int dx , int dy) = 0;
     virtual QRect getBounds() const = 0;
-    void move(int dx , int dy);
+    virtual void move(int dx , int dy);
 
     void setpos(int x , int y);
     void setStroke_color(const std::string &stroke_color);

@@ -57,7 +57,21 @@ bool TextObj::isHit(const QPoint& p) {
 }
 
 
-void TextObj::resize(int dx , int dy){
+void TextObj::resize(int dx, int dy) {
+    // Dragging right/down increases font size
+    int change = (std::abs(dx) > std::abs(dy)) ? dx : dy;
+    
+    // Scale down the speed (it grows too fast otherwise)
+    _fontSize += (change / 2); 
+    
+    if (_fontSize < 5) _fontSize = 5;
 }
+
 QRect TextObj::getBounds() const {
+    // Estimate dimensions
+    int estimatedWidth = _text.length() * _fontSize * 0.6;
+    int estimatedHeight = _fontSize;
+
+    // Text draws UP from baseline, so y is the bottom
+    return QRect(_x, _y - estimatedHeight, estimatedWidth, estimatedHeight);
 }
