@@ -46,3 +46,4 @@ void Circle::resize(int dx , int dy){
 QRect Circle::getBounds() const {
     return QRect(_x - _radius , _y - _radius , _radius*2 , _radius * 2);
 }
+

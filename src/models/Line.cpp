@@ -85,3 +85,8 @@ QRect Line::getBounds() const {
     // QRect::normalized() handles the case where x2 < x1 or y2 < y1
     return QRect(_x, _y, _x2 - _x, _y2 - _y).normalized();
 }
+
+void Line::move(int dx , int dy) {
+    _x += dx; _y += dy;
+    _x2 += dx; _y2 += dy;
+}
