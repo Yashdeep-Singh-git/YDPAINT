@@ -1,0 +1,46 @@
+#include "include/gui/Canvas.h"
+#include "include/models/Circle.h"
+#include "include/models/Rectangle.h"
+#include "include/models/Line.h"
+#include "include/models/Hexagon.h"
+#include "include/models/Freehand.h"
+#include "include/models/Text.h"
+#include <QPainter>
+#include <cmath>
+#include <QInputDialog>
+#include <QKeyEvent>
+
+void Canvas::keyPressEvent(QKeyEvent *event) {
+    bool ctrlPressed = event->modifiers() & Qt::ControlModifier;
+    if (ctrlPressed && event->key() == Qt::Key_Z) {
+        undo();
+    }
+    else if (ctrlPressed && (event->key() == Qt::Key_Y || 
+            (event->key() == Qt::Key_Z && (event->modifiers() & Qt::ShiftModifier)))) {
+        redo();
+    }
+    else if (ctrlPressed && event->key() == Qt::Key_C) {
+        copy();
+    }
+    else if (ctrlPressed && event->key() == Qt::Key_V) {
+        paste();
+    }
+    else if (ctrlPressed && event->key() == Qt::Key_X) {
+        cut();
+    }
+    else if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace) {
+        if (selectedShape) {
+            saveState();
+            auto it = std::find_if(shapes.begin(), shapes.end(), 
+                [this](const std::unique_ptr<Object>& s) { return s.get() == selectedShape; });
+            if (it != shapes.end()) {
+                shapes.erase(it);
+                selectedShape = nullptr;
+                update();
+            }
+        }
+    }
+    else {
+        QWidget::keyPressEvent(event);
+    }
+}

@@ -16,11 +16,9 @@ std::vector<QPoint> parsePoints(const std::string& pointsStr) {
     std::replace(cleanStr.begin(), cleanStr.end(), ',', ' ');
     std::stringstream ss(cleanStr);
     double x, y;
-    
     while (ss >> x >> y) { 
-        points.emplace_back(static_cast<int>(x), static_cast<int>(y));
+        points.emplace_back((int)(x), (int)(y));
     }
-
     return points;
 }
 
@@ -36,12 +34,10 @@ std::string SVGParser::getAttribute(const std::string& tag, const std::string& k
 std::vector<std::unique_ptr<Object>> SVGParser::parseFile(const std::string& filepath) {
     std::vector<std::unique_ptr<Object>> objects;
     std::ifstream file(filepath);
-
     if (!file.is_open()) {
         std::cerr << "Error: Could not open file " << filepath << std::endl;
         return objects;
     }
-
     std::string line;
     while (std::getline(file, line)) {
         if (line.find("circle") != std::string::npos) {
@@ -76,7 +72,6 @@ std::vector<std::unique_ptr<Object>> SVGParser::parseFile(const std::string& fil
             double rotation = std::stod(getAttribute(line , "rotation"));
             objects.push_back(std::make_unique<Hexagon>(cx, cy, r, rotation, stroke, fill, sw));
         }
-
         else if (line.find("polyline") != std::string::npos) {
             std::string pointsStr = getAttribute(line, "points");
             std::vector<QPoint> points = parsePoints(pointsStr);
@@ -93,7 +88,6 @@ std::vector<std::unique_ptr<Object>> SVGParser::parseFile(const std::string& fil
             std::string fill = getAttribute(line, "fill"); 
             size_t startPos = line.find(">");
             size_t endPos = line.find("</text>");
-            
             std::string content = "";
             if (startPos != std::string::npos && endPos != std::string::npos) {
                 content = line.substr(startPos + 1, endPos - startPos - 1);
