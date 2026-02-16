@@ -75,3 +75,6 @@ QRect TextObj::getBounds() const {
     // Text draws UP from baseline, so y is the bottom
     return QRect(_x, _y - estimatedHeight, estimatedWidth, estimatedHeight);
 }
+std::unique_ptr<Object> TextObj::clone() const {
+    return std::make_unique<TextObj>(*this);
+}

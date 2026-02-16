@@ -146,3 +146,9 @@ void Freehand::move(int dx, int dy) {
         p.setY(p.y() + dy);
     }
 }
+void Freehand::addPoint(const QPoint& p) { 
+    _points.push_back(QPointF(p)); 
+}
+std::unique_ptr<Object> Freehand::clone() const {
+    return std::make_unique<Freehand>(*this);
+}

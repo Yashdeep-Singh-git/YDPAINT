@@ -16,6 +16,7 @@ class Rectangle : public Object {
     void resize(int dx , int dy) override;
     QRect getBounds() const override;
     void setCornerRadius(int r) override;
+    std::unique_ptr<Object> clone() const override;
 };
 
 #endif

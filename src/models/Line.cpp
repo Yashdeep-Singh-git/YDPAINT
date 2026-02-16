@@ -90,3 +90,6 @@ void Line::move(int dx , int dy) {
     _x += dx; _y += dy;
     _x2 += dx; _y2 += dy;
 }
+std::unique_ptr<Object> Line::clone() const {
+    return std::make_unique<Line>(*this);
+}

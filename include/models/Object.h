@@ -28,6 +28,8 @@ class Object{
     void setStrokeWidth(int w) ;
     virtual void setCornerRadius(int r) ;
 
+    virtual std::unique_ptr<Object> clone() const = 0;
+
     void setpos(int x , int y);
     void setStroke_color(const std::string &stroke_color);
     void setFill_color(const std::string &fill_color);

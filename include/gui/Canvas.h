@@ -7,6 +7,7 @@
 #include <QWidget>
 #include <QPaintEvent>
 #include <QMouseEvent>
+#include <stack>
 #include "include/models/Object.h"
 #include "include/models/Freehand.h"
 
@@ -51,6 +52,14 @@ public:
     void bringToFront(int i);
     void clearShapes();
 
+    void copy();
+    void cut();
+    void paste();
+    void undo();
+    void redo();
+    
+    // Call this BEFORE doing anything destructive (Move, Draw, Delete)
+    void saveState();
 protected:
     // The "paint" function called automatically by Qt
     void paintEvent(QPaintEvent *event) override;
@@ -59,6 +68,9 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    
+    void keyPressEvent(QKeyEvent *event) override;
+
 
 private:
     // The container for all your shape objects
@@ -83,6 +95,15 @@ private:
     
     // A temporary pointer to hold the shape currently being drawn
     std::unique_ptr<Object> previewShape;
+    std::unique_ptr<Object> clipboard;
+
+    using State = std::vector<std::unique_ptr<Object>>;
+    
+    std::stack<State> undoStack;
+    std::stack<State> redoStack;
+
+    // Helper to Deep Copy a vector of shapes
+    State cloneVector(const State& source);
 };
 
 #endif

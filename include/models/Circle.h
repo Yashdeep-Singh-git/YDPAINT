@@ -15,6 +15,8 @@ class Circle : public Object {
     bool isHit(const QPoint& p) override;
     void resize(int dx , int dy) override;
     QRect getBounds() const override;
+
+    std::unique_ptr<Object> clone() const override ;
 };
 
 #endif

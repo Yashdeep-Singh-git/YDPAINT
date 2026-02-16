@@ -47,3 +47,7 @@ QRect Circle::getBounds() const {
     return QRect(_x - _radius , _y - _radius , _radius*2 , _radius * 2);
 }
 
+std::unique_ptr<Object> Circle::clone() const {
+        return std::make_unique<Circle>(*this);
+}
+

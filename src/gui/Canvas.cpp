@@ -8,8 +8,103 @@
 #include <QPainter>
 #include <cmath>
 #include <QInputDialog>
+#include <QKeyEvent>
 
 
+Canvas::State Canvas::cloneVector(const State& source) {
+    State destination;
+    destination.reserve(source.size());
+    for (const auto& shape : source) {
+        destination.push_back(shape->clone());
+    }
+    return destination;
+}
+
+void Canvas::saveState() {
+    // 1. Clear Redo Stack (because we branched off into a new history)
+    while (!redoStack.empty()) {
+        redoStack.pop();
+    }
+
+    // 2. Save current shapes to Undo Stack
+    undoStack.push(cloneVector(shapes));
+}
+
+void Canvas::undo() {
+    if (undoStack.empty()) return;
+
+    // 1. Push CURRENT state to Redo Stack (so we can go back)
+    redoStack.push(cloneVector(shapes));
+
+    // 2. Restore state from Undo Stack
+    shapes = std::move(undoStack.top());
+    undoStack.pop();
+
+    // 3. Reset selection (important to avoid crashing)
+    selectedShape = nullptr;
+    
+    update();
+}
+
+void Canvas::redo() {
+    if (redoStack.empty()) return;
+
+    // 1. Push CURRENT state to Undo Stack
+    undoStack.push(cloneVector(shapes));
+
+    // 2. Restore state from Redo Stack
+    shapes = std::move(redoStack.top());
+    redoStack.pop();
+
+    selectedShape = nullptr;
+    
+    update();
+}
+
+void Canvas::copy() {
+    if (selectedShape) {
+        // Clone the selected shape to clipboard
+        clipboard = selectedShape->clone();
+    }
+}
+
+void Canvas::cut() {
+    if (selectedShape) {
+        saveState(); // SAVE before modifying!
+
+        copy(); // Save to clipboard first
+        
+        // Remove from vector
+        // (Find the iterator for selectedShape)
+        auto it = std::find_if(shapes.begin(), shapes.end(), 
+            [this](const std::unique_ptr<Object>& s) { return s.get() == selectedShape; });
+            
+        if (it != shapes.end()) {
+            shapes.erase(it);
+            selectedShape = nullptr; // Clear selection
+            update();
+        }
+    }
+}
+
+void Canvas::paste() {
+    if (clipboard) {
+        saveState(); // SAVE before modifying!
+
+        // Create a NEW copy from the clipboard
+        auto newShape = clipboard->clone();
+        
+        // Offset it slightly so user sees it
+        newShape->move(20, 20);
+        
+        // Select the new shape
+        selectedShape = newShape.get();
+        
+        // Add to canvas
+        shapes.push_back(std::move(newShape));
+        update();
+    }
+}
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent), currentTool(ToolType::Select), isDrawing(false) {
     
@@ -26,6 +121,9 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent), currentTool(ToolType::Select)
     
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
+
+    setFocusPolicy(Qt::StrongFocus);
+    saveState();
 }
 
 void Canvas::bringToFront(int index) {
@@ -46,6 +144,7 @@ void Canvas::setStrokeColor(const std::string& color) {
     
     // Update currently selected shape immediately
     if (selectedShape) {
+        saveState();
         selectedShape->setStrokeColor(color);
         update(); // Re-paint the screen
     }
@@ -55,6 +154,7 @@ void Canvas::setFillColor(const std::string& color) {
     currentFillColor = color; 
     
     if (selectedShape) {
+        saveState();
         selectedShape->setFillColor(color);
         update();
     }
@@ -64,6 +164,7 @@ void Canvas::setStrokeWidth(int w) {
     currentStrokeWidth = w; 
     
     if (selectedShape) {
+        saveState();
         selectedShape->setStrokeWidth(w);
         update();
     }
@@ -71,6 +172,7 @@ void Canvas::setStrokeWidth(int w) {
 void Canvas::setcurrentRadius(int r) {
     currentRadius = r; // Update default for future shapes
     if (selectedShape) {
+        saveState();
         selectedShape->setCornerRadius(r);
         update(); // Re-paint
     }
@@ -83,6 +185,9 @@ void Canvas::clearShapes() {
     previewShape = nullptr;
 
     isDrawing = false;
+    
+    while (!undoStack.empty()) undoStack.pop();
+    while (!redoStack.empty()) redoStack.pop();
 
     update();
 }
@@ -109,6 +214,7 @@ void Canvas::mousePressEvent(QMouseEvent *event) {
                 if (shapes[i]->isHit(event->pos())) {
                     selectedShape = (&shapes[i])->get(); // Get raw pointer
                     interactionMode = InteractionMode::Moving;
+                    saveState();
                     bringToFront(i);
                     QRect bounds = selectedShape->getBounds();
                     isDrawing = true;
@@ -130,6 +236,7 @@ void Canvas::mousePressEvent(QMouseEvent *event) {
                     startPoint.x(), startPoint.y(), 
                     text.toStdString(), currentStrokeColor, 20
                 );
+                saveState();
                 shapes.push_back(std::move(t));
                 update();
             }
@@ -145,6 +252,7 @@ void Canvas::mousePressEvent(QMouseEvent *event) {
             currentFreehand = poly.get();
             
             // 2. Move ownership to main list immediately
+            saveState();
             shapes.push_back(std::move(poly));
             
             isDrawing = true;
@@ -221,7 +329,7 @@ void Canvas::mouseMoveEvent(QMouseEvent *event) {
             lastmousepos = currentPos; // Update for next frame
             update(); // Redraw
         }
-
+        
         update(); // Trigger paintEvent to redraw
     }
 }
@@ -240,6 +348,7 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event) {
         }
 
         if (previewShape) {
+            saveState();
             shapes.push_back(std::move(previewShape));
             previewShape = nullptr;
         }
@@ -285,5 +394,51 @@ void Canvas::paintEvent(QPaintEvent *event) {
         // Use a dashed line for preview effect
         painter.setPen(Qt::DashLine); 
         previewShape->draw(painter);
+    }
+}
+
+void Canvas::keyPressEvent(QKeyEvent *event) {
+    
+    // Check for Control Modifier (Cmd on Mac, Ctrl on Windows/Linux)
+    bool ctrlPressed = event->modifiers() & Qt::ControlModifier;
+
+    // Undo: Ctrl + Z
+    if (ctrlPressed && event->key() == Qt::Key_Z) {
+        undo();
+    }
+    // Redo: Ctrl + Y (or Ctrl + Shift + Z)
+    else if (ctrlPressed && (event->key() == Qt::Key_Y || 
+            (event->key() == Qt::Key_Z && (event->modifiers() & Qt::ShiftModifier)))) {
+        redo();
+    }
+    // Copy: Ctrl + C
+    else if (ctrlPressed && event->key() == Qt::Key_C) {
+        copy();
+    }
+    // Paste: Ctrl + V
+    else if (ctrlPressed && event->key() == Qt::Key_V) {
+        paste();
+    }
+    // Cut: Ctrl + X
+    else if (ctrlPressed && event->key() == Qt::Key_X) {
+        cut();
+    }
+    // Delete: Delete Key (Bonus feature!)
+    else if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace) {
+        if (selectedShape) {
+            saveState();
+            // Similar logic to cut(), but without copying to clipboard
+            auto it = std::find_if(shapes.begin(), shapes.end(), 
+                [this](const std::unique_ptr<Object>& s) { return s.get() == selectedShape; });
+            if (it != shapes.end()) {
+                shapes.erase(it);
+                selectedShape = nullptr;
+                update();
+            }
+        }
+    }
+    else {
+        // Pass other keys to base class (e.g. Alt+F4)
+        QWidget::keyPressEvent(event);
     }
 }

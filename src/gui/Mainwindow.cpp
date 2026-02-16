@@ -155,6 +155,34 @@ void MainWindow::createMenus() {
     exitAct->setShortcut(QKeySequence::Quit); // Ctrl+Q
     connect(exitAct, &QAction::triggered, this, &QWidget::close);
     fileMenu->addAction(exitAct);
+
+    QMenu *editMenu = menuBar()->addMenu("&Edit");
+    // --- FIX END ---
+
+    // Now you can add separators and actions to it
+    // (Note: You usually put the Separator AFTER the Undo/Redo actions, not before)
+    
+    QAction *undoAct = editMenu->addAction("&Undo");
+    undoAct->setShortcut(QKeySequence::Undo); 
+    connect(undoAct, &QAction::triggered, canvas, &Canvas::undo);
+
+    QAction *redoAct = editMenu->addAction("&Redo");
+    redoAct->setShortcut(QKeySequence::Redo); 
+    connect(redoAct, &QAction::triggered, canvas, &Canvas::redo);
+
+    editMenu->addSeparator(); // Separator looks better here
+
+    QAction *cutAct = editMenu->addAction("Cu&t");
+    cutAct->setShortcut(QKeySequence::Cut); 
+    connect(cutAct, &QAction::triggered, canvas, &Canvas::cut);
+
+    QAction *copyAct = editMenu->addAction("&Copy");
+    copyAct->setShortcut(QKeySequence::Copy); 
+    connect(copyAct, &QAction::triggered, canvas, &Canvas::copy);
+
+    QAction *pasteAct = editMenu->addAction("&Paste");
+    pasteAct->setShortcut(QKeySequence::Paste); 
+    connect(pasteAct, &QAction::triggered, canvas, &Canvas::paste);
 }
 
 void MainWindow::openFile() {

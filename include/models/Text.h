@@ -12,6 +12,7 @@ public:
 
     void resize(int dx , int dy) override;
     QRect getBounds() const override;
+    std::unique_ptr<Object> clone() const override ;
 };
 
 #endif

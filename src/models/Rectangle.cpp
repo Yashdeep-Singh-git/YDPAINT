@@ -51,3 +51,6 @@ void Rectangle::setCornerRadius(int r) {
         _rx = r;
         _ry = r; // Keep them equal for circular corners
 }
+std::unique_ptr<Object> Rectangle::clone() const {
+    return std::make_unique<Rectangle>(*this);
+}

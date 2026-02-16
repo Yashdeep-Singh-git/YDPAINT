@@ -78,3 +78,6 @@ QRect Hexagon::getBounds() const {
     // Box centered at (_x, _y) with side length 2*radius
     return QRect(_x - _radius, _y - _radius, _radius * 2, _radius * 2);
 }
+std::unique_ptr<Object> Hexagon::clone() const {
+    return std::make_unique<Hexagon>(*this);
+}

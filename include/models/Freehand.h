@@ -22,9 +22,8 @@ public:
     void move(int dx, int dy) override;
 
     // Update helper to convert on the fly
-    void addPoint(const QPoint& p) { 
-        _points.push_back(QPointF(p)); 
-    }
+    void addPoint(const QPoint& p) ;
+    std::unique_ptr<Object> clone() const override ;
 };
 
 #endif
