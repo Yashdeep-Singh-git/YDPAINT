@@ -29,8 +29,7 @@ void Circle::draw(QPainter &painter){
 
 std::string Circle::toSVG() {
     std::stringstream out;
-    out << "<circle cx=\"" << _x << "\" cy=\"" << _y << "\" r=\"" << _radius << "\" stroke=\"" << _stroke_color << "\" fill=\"" << _fill_color 
-    << "\" stroke-width=\"" << _stroke_width << "\" />";
+    out << "<circle cx=\"" << _x << "\" cy=\"" << _y << "\" r=\"" << _radius << "\" stroke=\"" << _stroke_color << "\" fill=\"" << _fill_color << "\" stroke-width=\"" << _stroke_width << "\" />";
     return out.str();
 }
 

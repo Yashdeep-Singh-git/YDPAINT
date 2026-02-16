@@ -23,22 +23,17 @@ void Rectangle::draw(QPainter &painter){
         QColor fColor(_fill_color.c_str());
         painter.setBrush(fColor);
     }
-    
     painter.drawRoundedRect(_x, _y , _width, _height , _rx , _ry);
 }
-
 std::string  Rectangle::toSVG(){
     std::stringstream out;
-    out << "<rect x=\"" << _x << "\" y=\"" << _y << "\" width=\"" << _width << "\" height=\"" << _height << "\" rx=\"" << _rx << "\" ry=\"" << _ry << "\" stroke=\"" << _stroke_color 
-    << "\" fill=\"" << _fill_color << "\" stroke-width=\"" << _stroke_width << "\" />";
+    out << "<rect x=\"" << _x << "\" y=\"" << _y << "\" width=\"" << _width << "\" height=\"" << _height << "\" rx=\"" << _rx << "\" ry=\"" << _ry << "\" stroke=\"" << _stroke_color << "\" fill=\"" << _fill_color << "\" stroke-width=\"" << _stroke_width << "\" />";
     return out.str();
 }
-
 bool Rectangle::isHit(const QPoint& qp){
     int tx = qp.x(); int ty = qp.y();
     return (tx>=_x && ty>=_y && tx<=_x+_width && ty<=_y+_height);
 }
-
 void Rectangle::resize(int dx , int dy){
     _width += dx; _height += dy;
     if (_width < 10) _width = 10;
@@ -49,7 +44,7 @@ QRect Rectangle::getBounds() const{
 }
 void Rectangle::setCornerRadius(int r) {
         _rx = r;
-        _ry = r; // Keep them equal for circular corners
+        _ry = r; 
 }
 std::unique_ptr<Object> Rectangle::clone() const {
     return std::make_unique<Rectangle>(*this);
