@@ -13,18 +13,17 @@
 void Canvas::mouseReleaseEvent(QMouseEvent *event) {
     if ( isDrawing) {
         if (currentTool == ToolType::Freehand) {
-            currentFreehand = nullptr;
-            isDrawing = false;
-            update();
-            return;
+            currentFreehand = nullptr;                                   // Stop tracking polyline
+            isDrawing = false;                                           // End drawing state
+            update();                                                    // Redraw canvas
+            return;                                                      // Exit early
         }
         if (previewShape) {
-            saveState();
-            shapes.push_back(std::move(previewShape));
-            previewShape = nullptr;
+            saveState();                                                 // Save history before commit
+            shapes.push_back(std::move(previewShape));                   // Move preview to main list
+            previewShape = nullptr;                                      // Reset preview pointer
         }
-        isDrawing = false;
-        update();
+        isDrawing = false;                                               // End drawing state
+        update();                                                        // Redraw final state
     }
 }
-

@@ -6,47 +6,38 @@
 
 void MainWindow::openFile() {
     if (!maybeSave())
-        return;
+        return;                                                  // Check for unsaved changes
 
     QString fileName = QFileDialog::getOpenFileName(
-        this, "Open SVG", "", "SVG Files (*.svg)"
+        this, "Open SVG", "", "SVG Files (*.svg)"                // Open file dialog
     );
     if (fileName.isEmpty())
-        return;
-    canvas->clearShapes();
-    auto loadedShapes = SVGParser::parseFile(fileName.toStdString());
+        return;                                                  // User cancelled
+    canvas->clearShapes();                                       // Clear existing drawing
+    auto loadedShapes = SVGParser::parseFile(fileName.toStdString()); // Parse SVG file
     for (auto& s : loadedShapes) {
-        canvas->addShape(std::move(s));
+        canvas->addShape(std::move(s));                          // Add shapes to canvas
     }
-    currentFile = fileName.toStdString();
+    currentFile = fileName.toStdString();                        // Update current path
 }
 
 void MainWindow::saveFile() {
-    // Open Save Dialog
     QString fileName = QFileDialog::getSaveFileName(this, "Save SVG", "", "SVG Files (*.svg)");
-
-    if (fileName.isEmpty()) return; 
-
-    // Call our existing helper
-    SVGParser::saveFile(fileName.toStdString(), canvas->getShapes());
-
-    // Update current file path
-    currentFile = fileName.toStdString();
+    if (fileName.isEmpty()) return;                              // User cancelled
+    SVGParser::saveFile(fileName.toStdString(), canvas->getShapes()); // Save canvas to file
+    currentFile = fileName.toStdString();                        // Update current path
 }
 
 void MainWindow::newFile() {
     if (!maybeSave())
-        return;
-
-    canvas->clearShapes();
-    currentFile = "";
+        return;                                                  // Check for unsaved changes
+    canvas->clearShapes();                                       // Reset canvas
+    currentFile = "";                                            // Reset filename
 }
 
 bool MainWindow::maybeSave() {
-    // If canvas is empty → nothing to save
     if (canvas->getShapes().empty())
-        return true;
-
+        return true;                                             // Nothing to save
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(
         this,
@@ -56,21 +47,20 @@ bool MainWindow::maybeSave() {
     );
 
     if (reply == QMessageBox::Save) {
-        // If file already has name → overwrite
         if (!currentFile.empty()) {
-            SVGParser::saveFile(currentFile, canvas->getShapes());
+            SVGParser::saveFile(currentFile, canvas->getShapes()); // Overwrite existing file
         }
         else {
-            saveFile();  // Open Save dialog
+            saveFile();                                          // Save as new file
             if (currentFile.empty())
-                return false;  // User cancelled Save dialog
+                return false;                                    // User cancelled save
         }
-        return true;
+        return true;                                             // Proceed
     }
     else if (reply == QMessageBox::Discard) {
-        return true;
+        return true;                                             // Discard changes
     }
     else {
-        return false;  // Cancel
+        return false;                                            // Cancel operation
     }
 }

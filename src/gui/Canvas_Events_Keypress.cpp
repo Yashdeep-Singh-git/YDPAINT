@@ -11,36 +11,36 @@
 #include <QKeyEvent>
 
 void Canvas::keyPressEvent(QKeyEvent *event) {
-    bool ctrlPressed = event->modifiers() & Qt::ControlModifier;
+    bool ctrlPressed = event->modifiers() & Qt::ControlModifier;        // Check for Ctrl modifier
     if (ctrlPressed && event->key() == Qt::Key_Z) {
-        undo();
+        undo();                                                         // Handle Undo
     }
     else if (ctrlPressed && (event->key() == Qt::Key_Y || 
             (event->key() == Qt::Key_Z && (event->modifiers() & Qt::ShiftModifier)))) {
-        redo();
+        redo();                                                         // Handle Redo (Ctrl+Y or Ctrl+Shift+Z)
     }
     else if (ctrlPressed && event->key() == Qt::Key_C) {
-        copy();
+        copy();                                                         // Handle Copy
     }
     else if (ctrlPressed && event->key() == Qt::Key_V) {
-        paste();
+        paste();                                                        // Handle Paste
     }
     else if (ctrlPressed && event->key() == Qt::Key_X) {
-        cut();
+        cut();                                                          // Handle Cut
     }
     else if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace) {
         if (selectedShape) {
-            saveState();
+            saveState();                                                // Save history before deleting
             auto it = std::find_if(shapes.begin(), shapes.end(), 
                 [this](const std::unique_ptr<Object>& s) { return s.get() == selectedShape; });
             if (it != shapes.end()) {
-                shapes.erase(it);
-                selectedShape = nullptr;
-                update();
+                shapes.erase(it);                                       // Remove shape from list
+                selectedShape = nullptr;                                // Clear selection
+                update();                                               // Redraw canvas
             }
         }
     }
     else {
-        QWidget::keyPressEvent(event);
+        QWidget::keyPressEvent(event);                                  // Pass unhandled keys to base
     }
 }
