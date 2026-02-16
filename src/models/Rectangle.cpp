@@ -47,3 +47,7 @@ void Rectangle::resize(int dx , int dy){
 QRect Rectangle::getBounds() const{
     return QRect(_x , _y , _width , _height);
 }
+void Rectangle::setCornerRadius(int r) {
+        _rx = r;
+        _ry = r; // Keep them equal for circular corners
+}

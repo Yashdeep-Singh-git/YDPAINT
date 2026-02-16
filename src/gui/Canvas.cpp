@@ -41,10 +41,40 @@ void Canvas::setTool(ToolType t) {
     currentTool = t;
 }
 
-void Canvas::setStrokeWidth(int w) { currentStrokeWidth = w; }
-void Canvas::setStrokeColor(const std::string& color) { currentStrokeColor = color; }
-void Canvas::setFillColor(const std::string& color) { currentFillColor = color; }
-void Canvas::setcurrentRadius(int r) {currentRadius = r; }
+void Canvas::setStrokeColor(const std::string& color) { 
+    currentStrokeColor = color; // Update default for future shapes
+    
+    // Update currently selected shape immediately
+    if (selectedShape) {
+        selectedShape->setStrokeColor(color);
+        update(); // Re-paint the screen
+    }
+}
+
+void Canvas::setFillColor(const std::string& color) { 
+    currentFillColor = color; 
+    
+    if (selectedShape) {
+        selectedShape->setFillColor(color);
+        update();
+    }
+}
+
+void Canvas::setStrokeWidth(int w) { 
+    currentStrokeWidth = w; 
+    
+    if (selectedShape) {
+        selectedShape->setStrokeWidth(w);
+        update();
+    }
+}
+void Canvas::setcurrentRadius(int r) {
+    currentRadius = r; // Update default for future shapes
+    if (selectedShape) {
+        selectedShape->setCornerRadius(r);
+        update(); // Re-paint
+    }
+}
 void Canvas::clearShapes() {
     shapes.clear();
 

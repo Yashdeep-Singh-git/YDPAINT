@@ -20,3 +20,8 @@ void Object::setStroke_width(int stroke_width){
 void Object::move(int dx , int dy){
     _x += dx; _y += dy;
 }
+
+void Object::setStrokeColor(const std::string& color) { _stroke_color = color; }
+void Object::setFillColor(const std::string& color) { _fill_color = color; }
+void Object::setStrokeWidth(int w) { _stroke_width = w; }
+void Object::setCornerRadius(int r){}

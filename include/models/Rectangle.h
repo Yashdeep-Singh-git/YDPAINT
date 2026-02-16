@@ -15,6 +15,7 @@ class Rectangle : public Object {
 
     void resize(int dx , int dy) override;
     QRect getBounds() const override;
+    void setCornerRadius(int r) override;
 };
 
 #endif
