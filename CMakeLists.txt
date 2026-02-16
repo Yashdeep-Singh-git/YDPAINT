@@ -34,7 +34,7 @@ file(GLOB_RECURSE HEADERS "include/gui/*.h" "include/models/*.h")
 
 set(RESOURCES resources.qrc)
 
-add_executable(VectorEditor ${SOURCES} ${HEADERS} ${RESOURCES})
+add_executable(PaintLite ${SOURCES} ${HEADERS} ${RESOURCES})
 
 # Link the libraries (Qt) to your executable
-target_link_libraries(VectorEditor PRIVATE Qt6::Widgets Qt6::Gui Qt6::Core)
+target_link_libraries(PaintLite PRIVATE Qt6::Widgets Qt6::Gui Qt6::Core)
