@@ -4,11 +4,9 @@
 #include <algorithm>
 #include <limits> 
 
-// Constructor
 Freehand::Freehand(const std::vector<QPoint>& points, std::string stroke, int width)
     : Object(0, 0, stroke, "none", width) 
 {
-    // Convert QPoint (int) to QPointF (double)
     for(const auto& p : points) {
         _points.push_back(QPointF(p));
     }
@@ -82,11 +80,9 @@ bool Freehand::isHit(const QPoint& p) {
     return false;
 }
 
-// THE FIXED RESIZE FUNCTION
 void Freehand::resize(int dx, int dy) {
     if (_points.empty()) return;
 
-    // 1. Calculate Bounds
     double minX = _points[0].x();
     double maxX = _points[0].x();
     double minY = _points[0].y();
@@ -102,14 +98,9 @@ void Freehand::resize(int dx, int dy) {
     double width = maxX - minX;
     double height = maxY - minY;
 
-    // 2. Safety Check (Prevent Division by Zero)
-    // If width is 0 (vertical line), we can't stretch width, treat as 1
     if ((width < 1 && dx<0) || (width+dx < 0.1)) return;
     if ((height < 1 && dy<0) || (height+dy < 0.1)) return ;
 
-    // 3. Apply Scaling
-    // We update the QPointF values directly. 
-    // Because they are doubles, they keep the fractional changes!
     for (auto &p : _points) {
         double relativeX = (p.x() - minX) / width;
         double relativeY = (p.y() - minY) / height;
@@ -121,8 +112,6 @@ void Freehand::resize(int dx, int dy) {
 
 QRect Freehand::getBounds() const {
     if (_points.empty()) return QRect();
-
-    // Reset limits for standard int QRect
     double minX = std::numeric_limits<double>::max();
     double minY = std::numeric_limits<double>::max();
     double maxX = std::numeric_limits<double>::lowest();
@@ -134,8 +123,6 @@ QRect Freehand::getBounds() const {
         if (p.x() > maxX) maxX = p.x();
         if (p.y() > maxY) maxY = p.y();
     }
-
-    // Return as integer QRect
     return QRect(static_cast<int>(minX), static_cast<int>(minY), 
                  static_cast<int>(maxX - minX), static_cast<int>(maxY - minY));
 }

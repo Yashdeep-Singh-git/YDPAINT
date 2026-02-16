@@ -19,7 +19,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private:
-    Canvas* canvas; // The drawing area
+    Canvas* canvas;
     std::string currentFile;
     void openFile();
     void saveFile();
@@ -28,4 +28,4 @@ private:
     bool maybeSave();
 };
 
-#endif // MAINWINDOW_H
+#endif 

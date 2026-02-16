@@ -29,19 +29,13 @@ enum class InteractionMode {
 };
 
 class Canvas : public QWidget {
-    Q_OBJECT // Required by Qt for signals/slots to work
+    Q_OBJECT 
 
 public:
-    // Constructor: Takes a parent widget (default is null)
     explicit Canvas(QWidget *parent = nullptr);
-
-    // Set the current tool (called from MainWindow)
     void setTool(ToolType t);
-
-    // Function to add a new shape to the canvas
     void addShape(std::unique_ptr<Object> shape);
 
-    // Getter for the parser to access shapes
     std::vector<std::unique_ptr<Object>>& getShapes();
 
     void setStrokeWidth(int w);
@@ -57,32 +51,22 @@ public:
     void paste();
     void undo();
     void redo();
-    
-    // Call this BEFORE doing anything destructive (Move, Draw, Delete)
     void saveState();
 protected:
-    // The "paint" function called automatically by Qt
     void paintEvent(QPaintEvent *event) override;
-
-    // 2. Override Mouse Events
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
-    
     void keyPressEvent(QKeyEvent *event) override;
 
 
 private:
-    // The container for all your shape objects
     std::vector<std::unique_ptr<Object>> shapes;
-
-    // 3. State Variables for Interaction
     ToolType currentTool;
     bool isDrawing;
-    QPoint startPoint;    // Where you first clicked
-    QPoint currentPoint;  // Where the mouse is right now
-
-    Object* selectedShape;  // selection variables
+    QPoint startPoint;   
+    QPoint currentPoint;  
+    Object* selectedShape; 
     QPoint lastmousepos;
     InteractionMode interactionMode;
 
@@ -93,7 +77,6 @@ private:
     std::string currentStrokeColor;
     std::string currentFillColor;
     
-    // A temporary pointer to hold the shape currently being drawn
     std::unique_ptr<Object> previewShape;
     std::unique_ptr<Object> clipboard;
 
@@ -102,7 +85,6 @@ private:
     std::stack<State> undoStack;
     std::stack<State> redoStack;
 
-    // Helper to Deep Copy a vector of shapes
     State cloneVector(const State& source);
 };
 

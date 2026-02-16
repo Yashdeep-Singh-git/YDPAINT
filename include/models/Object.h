@@ -22,7 +22,6 @@ class Object{
     virtual QRect getBounds() const = 0;
     virtual void move(int dx , int dy);
 
-    // Allow updating properties dynamically
     void setStrokeColor(const std::string& color) ;
     void setFillColor(const std::string& color) ;
     void setStrokeWidth(int w) ;
