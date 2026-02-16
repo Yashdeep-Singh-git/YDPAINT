@@ -155,23 +155,9 @@ void MainWindow::createMenus() {
     exitAct->setShortcut(QKeySequence::Quit); // Ctrl+Q
     connect(exitAct, &QAction::triggered, this, &QWidget::close);
     fileMenu->addAction(exitAct);
-
+    // 2. Edit Menu (Keep Cut/Copy/Paste here)
     QMenu *editMenu = menuBar()->addMenu("&Edit");
-    // --- FIX END ---
-
-    // Now you can add separators and actions to it
-    // (Note: You usually put the Separator AFTER the Undo/Redo actions, not before)
     
-    QAction *undoAct = editMenu->addAction("&Undo");
-    undoAct->setShortcut(QKeySequence::Undo); 
-    connect(undoAct, &QAction::triggered, canvas, &Canvas::undo);
-
-    QAction *redoAct = editMenu->addAction("&Redo");
-    redoAct->setShortcut(QKeySequence::Redo); 
-    connect(redoAct, &QAction::triggered, canvas, &Canvas::redo);
-
-    editMenu->addSeparator(); // Separator looks better here
-
     QAction *cutAct = editMenu->addAction("Cu&t");
     cutAct->setShortcut(QKeySequence::Cut); 
     connect(cutAct, &QAction::triggered, canvas, &Canvas::cut);
@@ -183,6 +169,24 @@ void MainWindow::createMenus() {
     QAction *pasteAct = editMenu->addAction("&Paste");
     pasteAct->setShortcut(QKeySequence::Paste); 
     connect(pasteAct, &QAction::triggered, canvas, &Canvas::paste);
+
+    // --- NEW: Add Undo/Redo directly to the Menu Bar ---
+    
+    // 3. Undo Action (Direct Click)
+    QAction *undoAct = new QAction(QIcon(":/resources/icons/undo.png"), "", this);
+    undoAct->setShortcut(QKeySequence::Undo);
+    undoAct->setToolTip("Undo (Ctrl+Z)"); // Tooltip is important for icons!
+    connect(undoAct, &QAction::triggered, canvas, &Canvas::undo);
+    
+    menuBar()->addAction(undoAct); 
+
+    // 4. Redo Action (Icon)
+    QAction *redoAct = new QAction(QIcon(":/resources/icons/redo.png"), "", this);
+    redoAct->setShortcut(QKeySequence::Redo);
+    redoAct->setToolTip("Redo (Ctrl+Y)");
+    connect(redoAct, &QAction::triggered, canvas, &Canvas::redo);
+    
+    menuBar()->addAction(redoAct);
 }
 
 void MainWindow::openFile() {

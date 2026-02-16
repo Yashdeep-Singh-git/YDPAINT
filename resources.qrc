@@ -11,5 +11,7 @@
         <file>resources/icons/stroke_color.png</file>
         <file>resources/icons/fill_color.png</file>
         <file>resources/icons/cursor.png</file>
+        <file>resources/icons/undo.png</file>
+        <file>resources/icons/redo.png</file>
     </qresource>
 </RCC>
